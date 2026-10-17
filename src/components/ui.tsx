@@ -1,186 +1,149 @@
-import { useEffect, type ReactNode } from 'react'
-import { createPortal } from 'react-dom'
-import { Minus, Plus, X } from 'lucide-react'
-import { sfx } from '../lib/sound'
-
+import { useEffect, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
+import { Minus, Plus, X } from 'lucide-react';
+import { sfx } from '../lib/sound';
+import { t } from '../i18n'
 interface ModalProps {
-  open: boolean
-  onClose?: () => void
-  children: ReactNode
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-  className?: string
-  closeOnBackdrop?: boolean
+  open: boolean;
+  onClose?: () => void;
+  children: ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  className?: string;
+  closeOnBackdrop?: boolean;
 }
-
 export function Modal({
   open,
   onClose,
   children,
   size = 'md',
   className = '',
-  closeOnBackdrop = true,
+  closeOnBackdrop = true
 }: ModalProps) {
   useEffect(() => {
-    if (!open) return undefined
+    if (!open) return undefined;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && onClose) onClose()
-    }
-    document.addEventListener('keydown', onKey)
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+      if (event.key === 'Escape' && onClose) onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     return () => {
-      document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prev
-    }
-  }, [open, onClose])
-
-  if (!open) return null
-
-  return createPortal(
-    <div
-      className="modal-backdrop"
-      onMouseDown={(event) => {
-        if (closeOnBackdrop && event.target === event.currentTarget && onClose) onClose()
-      }}
-    >
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open, onClose]);
+  if (!open) return null;
+  return createPortal(<div className="modal-backdrop" onMouseDown={event => {
+    if (closeOnBackdrop && event.target === event.currentTarget && onClose) onClose();
+  }}>
       <div className={`modal modal--${size} ${className}`} role="dialog" aria-modal="true">
-        {onClose && (
-          <button type="button" className="modal-close" onClick={onClose} aria-label="Закрыть">
+        {onClose && <button type="button" className="modal-close" onClick={onClose} aria-label={t("Закрыть")}>
             <X size={18} />
-          </button>
-        )}
+          </button>}
         {children}
       </div>
-    </div>,
-    document.body,
-  )
+    </div>, document.body);
 }
-
 interface StepperProps {
-  value: number
-  min: number
-  max: number
-  onChange: (value: number) => void
-  label?: string
-  suffix?: string
+  value: number;
+  min: number;
+  max: number;
+  onChange: (value: number) => void;
+  label?: string;
+  suffix?: string;
 }
-
-export function Stepper({ value, min, max, onChange, label, suffix }: StepperProps) {
-  return (
-    <div className="stepper">
+export function Stepper({
+  value,
+  min,
+  max,
+  onChange,
+  label,
+  suffix
+}: StepperProps) {
+  return <div className="stepper">
       {label && <span className="stepper-label">{label}</span>}
       <div className="stepper-controls">
-        <button
-          type="button"
-          className="stepper-btn"
-          disabled={value <= min}
-          onClick={() => {
-            sfx.tap()
-            onChange(Math.max(min, value - 1))
-          }}
-          aria-label="Уменьшить"
-        >
+        <button type="button" className="stepper-btn" disabled={value <= min} onClick={() => {
+        sfx.tap();
+        onChange(Math.max(min, value - 1));
+      }} aria-label={t("Уменьшить")}>
           <Minus size={15} />
         </button>
         <span className="stepper-value">
           {value}
           {suffix ? <small>{suffix}</small> : null}
         </span>
-        <button
-          type="button"
-          className="stepper-btn"
-          disabled={value >= max}
-          onClick={() => {
-            sfx.tap()
-            onChange(Math.min(max, value + 1))
-          }}
-          aria-label="Увеличить"
-        >
+        <button type="button" className="stepper-btn" disabled={value >= max} onClick={() => {
+        sfx.tap();
+        onChange(Math.min(max, value + 1));
+      }} aria-label={t("Увеличить")}>
           <Plus size={15} />
         </button>
       </div>
-    </div>
-  )
+    </div>;
 }
-
 export function Toggle({
   checked,
   onChange,
-  label,
+  label
 }: {
-  checked: boolean
-  onChange: (value: boolean) => void
-  label?: string
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  label?: string;
 }) {
-  return (
-    <button
-      type="button"
-      className={`toggle ${checked ? 'is-on' : ''}`}
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={() => {
-        sfx.tap()
-        onChange(!checked)
-      }}
-    >
+  return <button type="button" className={`toggle ${checked ? 'is-on' : ''}`} role="switch" aria-checked={checked} aria-label={label} onClick={() => {
+    sfx.tap();
+    onChange(!checked);
+  }}>
       <span className="toggle-knob" />
-    </button>
-  )
+    </button>;
 }
-
 export function Pill({
   children,
   tone = 'neutral',
-  className = '',
+  className = ''
 }: {
-  children: ReactNode
-  tone?: 'neutral' | 'accent' | 'success' | 'danger' | 'info'
-  className?: string
+  children: ReactNode;
+  tone?: 'neutral' | 'accent' | 'success' | 'danger' | 'info';
+  className?: string;
 }) {
-  return <span className={`pill pill--${tone} ${className}`}>{children}</span>
+  return <span className={`pill pill--${tone} ${className}`}>{children}</span>;
 }
-
 export function SectionTitle({
   eyebrow,
   title,
   hint,
-  action,
+  action
 }: {
-  eyebrow?: ReactNode
-  title: ReactNode
-  hint?: ReactNode
-  action?: ReactNode
+  eyebrow?: ReactNode;
+  title: ReactNode;
+  hint?: ReactNode;
+  action?: ReactNode;
 }) {
-  return (
-    <div className="section-title">
+  return <div className="section-title">
       <div className="section-title-main">
         {eyebrow && <div className="eyebrow">{eyebrow}</div>}
         <h2>{title}</h2>
         {hint && <p>{hint}</p>}
       </div>
       {action && <div className="section-title-action">{action}</div>}
-    </div>
-  )
+    </div>;
 }
-
 export function EmptyState({
   icon,
   title,
   text,
-  action,
+  action
 }: {
-  icon: ReactNode
-  title: string
-  text: string
-  action?: ReactNode
+  icon: ReactNode;
+  title: string;
+  text: string;
+  action?: ReactNode;
 }) {
-  return (
-    <div className="empty-state">
+  return <div className="empty-state">
       <div className="empty-icon">{icon}</div>
       <h3>{title}</h3>
       <p>{text}</p>
       {action}
-    </div>
-  )
+    </div>;
 }

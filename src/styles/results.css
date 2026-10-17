@@ -66,7 +66,7 @@
   align-items: center;
   padding: 20px 18px 16px;
   border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--ink-rgb), 0.1);
   background:
     radial-gradient(220px 140px at 50% 0%, color-mix(in srgb, var(--team-from) 16%, transparent), transparent 72%),
     linear-gradient(180deg, rgba(20, 34, 58, 0.82), rgba(10, 18, 33, 0.94));
@@ -91,7 +91,7 @@
     linear-gradient(180deg, rgba(31, 44, 68, 0.9), rgba(12, 20, 35, 0.96));
   box-shadow:
     0 30px 80px -44px rgba(255, 170, 50, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    inset 0 1px 0 rgba(var(--ink-rgb), 0.08);
 }
 
 .podium-place {
@@ -101,7 +101,7 @@
   padding: 5px 10px;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(var(--ink-rgb), 0.04);
   color: var(--muted);
   font-size: 9px;
   font-weight: 600;
@@ -124,7 +124,7 @@
   border-radius: 20px;
   background: linear-gradient(150deg, var(--team-from), var(--team-to));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 1px 0 rgba(var(--ink-rgb), 0.5),
     0 16px 32px -14px var(--team-to);
 }
 
@@ -212,7 +212,7 @@
   padding: 5px 9px;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(var(--ink-rgb), 0.04);
   color: var(--muted);
   font-size: 9.5px;
 }
@@ -236,7 +236,7 @@
 }
 
 .results-row:nth-child(even) {
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(var(--ink-rgb), 0.025);
 }
 
 .results-row--head {
@@ -256,7 +256,7 @@
   display: grid;
   place-items: center;
   border-radius: 7px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(var(--ink-rgb), 0.05);
   color: var(--muted);
   font-family: var(--font-head);
   font-size: 9px;
@@ -364,4 +364,27 @@
     transform: translateY(105vh) rotate(720deg);
     opacity: 0.1;
   }
+}
+
+
+html[data-theme='light'] .results-page {
+  background:
+    radial-gradient(900px 600px at 50% -10%, rgba(255, 190, 90, 0.3), transparent 65%),
+    radial-gradient(800px 600px at 10% 100%, rgba(120, 160, 255, 0.22), transparent 65%),
+    linear-gradient(180deg, #f2f6fd 0%, #eef3fb 55%, #e9eef8 100%);
+}
+
+html[data-theme='light'] .results-title,
+html[data-theme='light'] .results-eyebrow,
+html[data-theme='light'] .podium-name {
+  color: var(--text);
+  text-shadow: none;
+}
+
+
+html[data-theme='light'] .results-title {
+  background: linear-gradient(180deg, #b06a00 0%, #d9830c 55%, #a85f00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

@@ -105,7 +105,7 @@
   height: 4px;
   margin-top: 6px;
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(var(--ink-rgb), 0.07);
   overflow: hidden;
 }
 
@@ -133,7 +133,7 @@
   padding: 15px 16px;
   border-radius: 15px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.028);
+  background: rgba(var(--ink-rgb), 0.028);
 }
 
 .question-mark {
@@ -148,7 +148,7 @@
   font-family: var(--font-head);
   font-size: 15px;
   font-weight: 700;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 1px 0 rgba(var(--ink-rgb), 0.6);
 }
 
 .question-text p {
@@ -172,7 +172,7 @@
   padding: 12px 13px;
   border-radius: 12px;
   border: 1px solid var(--line-strong);
-  background: rgba(255, 255, 255, 0.032);
+  background: rgba(var(--ink-rgb), 0.032);
   color: #dbe5f5;
   text-align: left;
   font-size: 13px;
@@ -199,7 +199,7 @@
   place-items: center;
   border-radius: 8px;
   border: 1px solid var(--line-strong);
-  background: rgba(255, 255, 255, 0.045);
+  background: rgba(var(--ink-rgb), 0.045);
   color: var(--muted);
   font-size: 11px;
   font-weight: 600;
@@ -294,7 +294,7 @@
   gap: 10px;
   padding: 18px;
   border-radius: 12px;
-  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border: 1px dashed rgba(var(--ink-rgb), 0.16);
   color: var(--muted-2);
   font-size: 12px;
   line-height: 1.5;
@@ -343,7 +343,7 @@
   gap: 7px;
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(var(--ink-rgb), 0.08);
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
@@ -364,7 +364,7 @@
   padding: 10px 13px;
   border-radius: 11px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(var(--ink-rgb), 0.025);
   color: var(--muted);
   font-size: 11.5px;
 }
@@ -525,7 +525,7 @@
   place-items: center;
   border-radius: 7px;
   border: 1px solid var(--line-strong);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(var(--ink-rgb), 0.04);
   color: var(--muted);
   font-size: 10px;
   font-weight: 600;
@@ -578,7 +578,7 @@
   gap: 5px;
   padding: 6px 10px;
   border-radius: 8px;
-  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border: 1px dashed rgba(var(--ink-rgb), 0.16);
   background: transparent;
   color: var(--muted);
   font-size: 11px;
@@ -700,7 +700,7 @@
   margin: 12px 0 4px;
   padding: 10px 12px 6px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(var(--ink-rgb), 0.09);
   background: rgba(8, 16, 30, 0.55);
 }
 
@@ -744,5 +744,43 @@
 
   .question-chart figcaption {
     font-size: 11px;
+  }
+}
+
+/* Перевод задания на месте */
+.question-translate {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 2px;
+}
+
+.question-translate .btn.is-active {
+  border-color: rgba(255, 194, 71, 0.55);
+  color: var(--gold);
+}
+
+.question-translate-note {
+  font-size: 10.5px;
+  letter-spacing: 0.3px;
+  color: var(--muted-2);
+}
+
+.question-translate-note.is-error {
+  color: #ff9fae;
+}
+
+html[data-theme='light'] .question-translate-note.is-error {
+  color: #a91f3c;
+}
+
+.spin {
+  animation: qspin 0.9s linear infinite;
+}
+
+@keyframes qspin {
+  to {
+    transform: rotate(360deg);
   }
 }

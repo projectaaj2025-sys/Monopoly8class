@@ -90,7 +90,7 @@
   padding: 12px;
   border-radius: 18px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(var(--ink-rgb), 0.025);
 }
 
 .library-stats > div {
@@ -196,7 +196,7 @@
 
 .board-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(255, 255, 255, 0.17);
+  border-color: rgba(var(--ink-rgb), 0.17);
   box-shadow: 0 34px 70px -42px rgba(0, 0, 0, 0.95);
 }
 
@@ -235,14 +235,14 @@
   padding: 4px;
   aspect-ratio: 9 / 5.5;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(var(--ink-rgb), 0.18);
   background: rgba(3, 8, 17, 0.6);
-  box-shadow: 0 18px 34px -18px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 34px -18px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(var(--ink-rgb), 0.08);
 }
 
 .board-card-mini > span {
   border-radius: 1.5px;
-  border: 0.5px solid rgba(255, 255, 255, 0.28);
+  border: 0.5px solid rgba(var(--ink-rgb), 0.28);
   min-width: 0;
   min-height: 0;
 }
@@ -278,7 +278,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(var(--ink-rgb), 0.5);
   font-size: 8px;
   letter-spacing: 0.4px;
   text-transform: uppercase;
@@ -321,8 +321,8 @@
 .board-card-categories span {
   padding: 3px 7px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(var(--ink-rgb), 0.08);
+  background: rgba(var(--ink-rgb), 0.04);
   color: #b3c2d9;
   font-size: 9px;
 }
@@ -366,10 +366,10 @@
   gap: 5px;
   min-height: 380px;
   padding: 26px;
-  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border: 1px dashed rgba(var(--ink-rgb), 0.16);
   background:
     radial-gradient(220px 160px at 50% 30%, rgba(255, 194, 71, 0.06), transparent 70%),
-    rgba(255, 255, 255, 0.015);
+    rgba(var(--ink-rgb), 0.015);
   color: var(--muted);
   cursor: pointer;
   text-align: center;

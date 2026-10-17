@@ -1,5 +1,6 @@
 import { useId } from 'react'
 import type { ChartSpec } from '../types'
+import { t } from '../i18n'
 
 const W = 520
 const H = 300
@@ -63,7 +64,7 @@ export function QuestionChart({ spec }: { spec: ChartSpec }) {
       <svg
         viewBox={`0 0 ${W} ${H}`}
         role="img"
-        aria-label={`График: ${spec.yLabel} от ${spec.xLabel}`}
+        aria-label={`${t("График:")} ${spec.yLabel} ${t("от")} ${spec.xLabel}`}
       >
         <defs>
           <clipPath id={`plot-${clipId}`}>

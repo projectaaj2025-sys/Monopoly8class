@@ -10,9 +10,12 @@ import '@fontsource/unbounded/700.css'
 import '@fontsource/unbounded/800.css'
 import './styles/index.css'
 import App from './App'
+import { LocaleProvider } from './i18n'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <LocaleProvider>
+      <App />
+    </LocaleProvider>
   </StrictMode>,
 )

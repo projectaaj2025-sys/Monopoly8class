@@ -1,0 +1,608 @@
+/* ─────────────────────────────────────────────────────────────
+   Светлая тема. Включается атрибутом data-theme="light" на <html>.
+   Тёмная тема остаётся исходной, здесь только переопределения.
+   ───────────────────────────────────────────────────────────── */
+
+:root[data-theme='light'] {
+  --ink-rgb: 15, 30, 56;
+  --bg: #eef2f9;
+  --bg-2: #e6ecf7;
+  --bg-3: #ffffff;
+  --panel: rgba(255, 255, 255, 0.9);
+  --panel-solid: #ffffff;
+  --line: rgba(15, 30, 56, 0.1);
+  --line-strong: rgba(15, 30, 56, 0.18);
+  --text: #0f1e38;
+  --muted: #4f6288;
+  --muted-2: #71839f;
+  --gold: #b26b00;
+  --gold-2: #d97f0c;
+  --gold-soft: rgba(214, 150, 30, 0.14);
+  --green: #0d8f63;
+  --red: #d23c5f;
+  --violet: #7a44cc;
+  color-scheme: light;
+}
+
+html[data-theme='light'] body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+html[data-theme='light'] ::selection {
+  background: rgba(255, 190, 70, 0.4);
+  color: #22160a;
+}
+
+html[data-theme='light'] ::-webkit-scrollbar-track {
+  background: rgba(15, 30, 56, 0.04);
+}
+
+html[data-theme='light'] ::-webkit-scrollbar-thumb {
+  background: rgba(15, 30, 56, 0.18);
+}
+
+html[data-theme='light'] .app {
+  background:
+    radial-gradient(1100px 620px at 12% -8%, rgba(120, 160, 245, 0.26), transparent 68%),
+    radial-gradient(900px 720px at 100% 4%, rgba(168, 128, 232, 0.16), transparent 70%),
+    radial-gradient(900px 700px at 50% 110%, rgba(255, 186, 92, 0.16), transparent 70%),
+    linear-gradient(180deg, #f2f6fd 0%, #eef2fa 48%, #e9eef8 100%);
+}
+
+html[data-theme='light'] .app-glow {
+  opacity: 0.45;
+}
+
+html[data-theme='light'] .app-stars {
+  opacity: 0.35;
+}
+
+/* ─── Шапка и базовые поверхности ─── */
+
+html[data-theme='light'] .topbar {
+  background: rgba(250, 252, 255, 0.82);
+  border-bottom-color: rgba(15, 30, 56, 0.1);
+  box-shadow: 0 12px 30px -26px rgba(15, 30, 56, 0.5);
+}
+
+html[data-theme='light'] .brand-text b {
+  color: var(--text);
+}
+
+html[data-theme='light'] .brand-mark {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 8px 18px -10px rgba(190, 120, 10, 0.7);
+}
+
+html[data-theme='light'] .mainnav button {
+  color: var(--muted);
+}
+
+html[data-theme='light'] .mainnav button.is-active {
+  color: #3a2604;
+  background: linear-gradient(180deg, #ffe6a6, #ffc95c);
+  border-color: rgba(180, 120, 20, 0.35);
+}
+
+html[data-theme='light'] .panel,
+html[data-theme='light'] .team-panel,
+html[data-theme='light'] .feed-panel {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafd 100%);
+  border-color: rgba(15, 30, 56, 0.1);
+  box-shadow:
+    0 26px 60px -46px rgba(21, 40, 74, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+html[data-theme='light'] .modal-backdrop {
+  background: rgba(22, 38, 66, 0.42);
+}
+
+html[data-theme='light'] .modal {
+  border-color: rgba(15, 30, 56, 0.12);
+  background:
+    radial-gradient(700px 300px at 10% -10%, rgba(120, 160, 255, 0.16), transparent 70%),
+    linear-gradient(180deg, #ffffff 0%, #f6f9fe 100%);
+  box-shadow:
+    0 50px 140px -40px rgba(21, 40, 74, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+html[data-theme='light'] .app-toast,
+html[data-theme='light'] .game-toast {
+  background: linear-gradient(180deg, #ffffff, #f2f6fd);
+  border-color: rgba(15, 30, 56, 0.14);
+  color: var(--text);
+  box-shadow: 0 18px 40px -20px rgba(21, 40, 74, 0.45);
+}
+
+html[data-theme='light'] .game-toast--neutral {
+  background: linear-gradient(180deg, #ffffff, #eef3fb);
+  border-color: rgba(15, 30, 56, 0.14);
+}
+
+html[data-theme='light'] .field input,
+html[data-theme='light'] .field textarea,
+html[data-theme='light'] .search-field,
+html[data-theme='light'] .team-input,
+html[data-theme='light'] .import-textarea {
+  background: #ffffff;
+  border-color: rgba(15, 30, 56, 0.16);
+  color: var(--text);
+}
+
+html[data-theme='light'] .field input:focus,
+html[data-theme='light'] .field textarea:focus {
+  background: #ffffff;
+  border-color: rgba(214, 150, 30, 0.65);
+}
+
+html[data-theme='light'] .btn--ghost {
+  background: rgba(15, 30, 56, 0.04);
+  border-color: rgba(15, 30, 56, 0.12);
+}
+
+html[data-theme='light'] .btn--ghost:hover {
+  background: rgba(15, 30, 56, 0.08);
+}
+
+html[data-theme='light'] .icon-btn--ghost {
+  background: rgba(15, 30, 56, 0.04);
+  border-color: rgba(15, 30, 56, 0.12);
+}
+
+/* ─── Настройка игры ─── */
+
+html[data-theme='light'] .hero {
+  border-color: rgba(15, 30, 56, 0.12);
+  box-shadow: 0 40px 80px -60px rgba(21, 40, 74, 0.6);
+}
+
+html[data-theme='light'] .hero-bg img {
+  filter: brightness(1.08) saturate(1.02);
+}
+
+html[data-theme='light'] .hero-veil {
+  background:
+    radial-gradient(ellipse at 50% 46%, rgba(244, 248, 255, 0.62) 0%, rgba(238, 244, 253, 0.8) 46%, rgba(232, 239, 250, 0.94) 100%),
+    linear-gradient(180deg, rgba(246, 250, 255, 0.5), rgba(236, 242, 251, 0.9));
+}
+
+html[data-theme='light'] .hero-title,
+html[data-theme='light'] .hero p,
+html[data-theme='light'] .hero-sub {
+  color: var(--text);
+  text-shadow: none;
+}
+
+html[data-theme='light'] .hero-badge,
+html[data-theme='light'] .hero-stats span {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(15, 30, 56, 0.12);
+  color: var(--text);
+}
+
+html[data-theme='light'] .hero-actions .btn {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(15, 30, 56, 0.16);
+  color: var(--text);
+}
+
+html[data-theme='light'] .hero-cta {
+  box-shadow: 0 18px 40px -20px rgba(190, 120, 10, 0.7);
+}
+
+html[data-theme='light'] .grade-card {
+  background: linear-gradient(180deg, #ffffff, #f5f8fd);
+  border-color: rgba(15, 30, 56, 0.12);
+  box-shadow: 0 20px 45px -38px rgba(21, 40, 74, 0.5);
+}
+
+html[data-theme='light'] .grade-card.is-selected {
+  background:
+    radial-gradient(240px 160px at 50% 0%, color-mix(in srgb, var(--grade-accent) 20%, transparent), transparent 75%),
+    linear-gradient(180deg, #ffffff, #f7faff);
+}
+
+html[data-theme='light'] .mode-switch,
+html[data-theme='light'] .segmented,
+html[data-theme='light'] .points-picker,
+html[data-theme='light'] .type-switch {
+  background: rgba(15, 30, 56, 0.05);
+  border-color: rgba(15, 30, 56, 0.12);
+}
+
+html[data-theme='light'] .mode-switch button,
+html[data-theme='light'] .segmented button {
+  color: var(--muted);
+}
+
+html[data-theme='light'] .mode-switch button.is-active,
+html[data-theme='light'] .segmented button.is-active {
+  background: #ffffff;
+  color: var(--text);
+  box-shadow: 0 6px 14px -10px rgba(21, 40, 74, 0.6);
+}
+
+html[data-theme='light'] .quarter-card,
+html[data-theme='light'] .topic-chip,
+html[data-theme='light'] .preset-card,
+html[data-theme='light'] .ticket-preview {
+  background: #ffffff;
+  border-color: rgba(15, 30, 56, 0.12);
+}
+
+html[data-theme='light'] .topic-chip.is-selected,
+html[data-theme='light'] .quarter-card.is-selected {
+  background: linear-gradient(180deg, #fff6df, #ffe9b8);
+  border-color: rgba(200, 140, 30, 0.45);
+}
+
+html[data-theme='light'] .topics-warning {
+  background: rgba(255, 232, 186, 0.6);
+  border-color: rgba(200, 140, 30, 0.35);
+  color: #6b4706;
+}
+
+html[data-theme='light'] .mini-board,
+html[data-theme='light'] .mini-center {
+  border-color: rgba(15, 30, 56, 0.12);
+}
+
+html[data-theme='light'] .mini-board {
+  background: #eaeff8;
+}
+
+html[data-theme='light'] .mini-center {
+  background: linear-gradient(180deg, #ffffff, #eef3fb);
+}
+
+/* ─── Поле и игровой экран ─── */
+
+html[data-theme='light'] .board-frame {
+  background: linear-gradient(150deg, var(--frame-a) 0%, var(--frame-b) 28%, #cfd9ea 52%, var(--frame-b) 78%, var(--frame-a) 100%);
+  box-shadow:
+    0 46px 100px -50px color-mix(in srgb, var(--accent) 40%, transparent),
+    0 30px 70px -50px rgba(21, 40, 74, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+html[data-theme='light'] .board-frame-inner {
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 30, 56, 0.08),
+    inset 0 14px 40px rgba(21, 40, 74, 0.16);
+}
+
+html[data-theme='light'] .board-art img {
+  filter: hue-rotate(var(--art-hue)) saturate(calc(var(--art-saturate) * 0.9)) brightness(1.12) contrast(0.96);
+}
+
+html[data-theme='light'] .board-art-tint {
+  background:
+    radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--board-bg) 22%, transparent) 0%, color-mix(in srgb, var(--board-bg) 40%, transparent) 56%, rgba(236, 242, 251, 0.9) 100%),
+    linear-gradient(160deg, var(--accent-soft), transparent 46%);
+}
+
+html[data-theme='light'] .board-art-vignette {
+  background: linear-gradient(180deg, rgba(236, 242, 251, 0.5), transparent 24%, transparent 76%, rgba(230, 237, 248, 0.6));
+}
+
+html[data-theme='light'] .board-center {
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 65%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(244, 248, 255, 0.82));
+  box-shadow:
+    inset 0 0 50px rgba(255, 255, 255, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+html[data-theme='light'] .center-title {
+  text-shadow: none;
+}
+
+html[data-theme='light'] .center-brandline {
+  color: rgba(15, 30, 56, 0.55);
+}
+
+html[data-theme='light'] .team-card {
+  background:
+    radial-gradient(140px 70px at 100% 0%, color-mix(in srgb, var(--team-to) 18%, transparent), transparent 75%),
+    linear-gradient(150deg, #ffffff, #f4f8fd);
+  border-color: rgba(15, 30, 56, 0.1);
+}
+
+html[data-theme='light'] .turn-box,
+html[data-theme='light'] .die,
+html[data-theme='light'] .log-entry,
+html[data-theme='light'] .teacher-panel,
+html[data-theme='light'] .board-center .turn-box {
+  color: var(--text);
+}
+
+html[data-theme='light'] .die {
+  background: linear-gradient(180deg, #ffffff, #eaf0fa);
+  border-color: rgba(15, 30, 56, 0.16);
+  box-shadow:
+    0 8px 18px -10px rgba(21, 40, 74, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+html[data-theme='light'] .pip {
+  background: rgba(15, 30, 56, 0.16);
+}
+
+html[data-theme='light'] .pip.is-on {
+  background: radial-gradient(circle at 35% 30%, #4d6fa8, #1d3357 70%);
+}
+
+/* ─── Вопрос ─── */
+
+html[data-theme='light'] .question-modal {
+  background:
+    radial-gradient(700px 300px at 10% -10%, rgba(120, 160, 255, 0.16), transparent 70%),
+    linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+}
+
+html[data-theme='light'] .option {
+  background: linear-gradient(180deg, #ffffff, #f5f8fd);
+  border-color: rgba(15, 30, 56, 0.14);
+  color: var(--text);
+}
+
+html[data-theme='light'] .option:hover {
+  border-color: rgba(200, 140, 30, 0.5);
+  background: #fffaf0;
+}
+
+html[data-theme='light'] .option.is-right {
+  background: linear-gradient(180deg, #e2fbf0, #c9f5e3);
+  border-color: rgba(16, 150, 105, 0.55);
+  color: #084a34;
+}
+
+html[data-theme='light'] .option.is-wrong {
+  background: linear-gradient(180deg, #ffedf1, #ffdce4);
+  border-color: rgba(210, 60, 95, 0.5);
+  color: #5c0f22;
+}
+
+html[data-theme='light'] .answer-panel {
+  background: linear-gradient(180deg, #fff8e8, #fdf0d2);
+  border-color: rgba(200, 140, 30, 0.4);
+  color: #4a3208;
+}
+
+html[data-theme='light'] .answer-text {
+  color: #3a2604;
+}
+
+html[data-theme='light'] .question-chart {
+  background: #ffffff;
+  border-color: rgba(15, 30, 56, 0.12);
+}
+
+html[data-theme='light'] .timer-track {
+  background: rgba(15, 30, 56, 0.1);
+}
+
+/* ─── Библиотека, конструктор, итоги ─── */
+
+html[data-theme='light'] .board-card {
+  background: linear-gradient(180deg, #ffffff, #f6f9fd);
+  border-color: rgba(15, 30, 56, 0.12);
+  box-shadow: 0 26px 60px -50px rgba(21, 40, 74, 0.55);
+}
+
+html[data-theme='light'] .board-card-art {
+  background:
+    radial-gradient(320px 180px at 50% 0%, color-mix(in srgb, var(--board-accent, #6ea8ff) 18%, transparent), transparent 70%),
+    linear-gradient(170deg, #ffffff, #eef3fb);
+}
+
+html[data-theme='light'] .builder-section--check {
+  background: linear-gradient(180deg, #ffffff, #f4f8fd);
+  border-color: rgba(15, 30, 56, 0.12);
+}
+
+html[data-theme='light'] .builder-mini,
+html[data-theme='light'] .builder-mini-center {
+  background: #eef3fb;
+  border-color: rgba(15, 30, 56, 0.12);
+}
+
+html[data-theme='light'] .podium-card {
+  background: linear-gradient(180deg, #ffffff, #f5f8fd);
+  border-color: rgba(15, 30, 56, 0.12);
+}
+
+html[data-theme='light'] .podium-card.is-winner {
+  border-color: rgba(200, 140, 30, 0.5);
+  background:
+    radial-gradient(260px 180px at 50% 0%, rgba(255, 214, 120, 0.4), transparent 70%),
+    linear-gradient(180deg, #ffffff, #fff9ec);
+}
+
+html[data-theme='light'] .results-table th {
+  color: var(--muted-2);
+}
+
+html[data-theme='light'] .results-table td,
+html[data-theme='light'] .results-table tr {
+  border-color: rgba(15, 30, 56, 0.08);
+}
+
+html[data-theme='light'] .help-note {
+  background: rgba(255, 244, 218, 0.7);
+  border-color: rgba(200, 140, 30, 0.35);
+  color: #5d3f07;
+}
+
+
+/* ─── Контраст текста на светлых поверхностях ─── */
+
+html[data-theme='light'] .pill {
+  color: #33456a;
+}
+
+html[data-theme='light'] .pill--accent {
+  color: #855000;
+  background: rgba(214, 150, 30, 0.16);
+  border-color: rgba(180, 120, 20, 0.32);
+}
+
+html[data-theme='light'] .pill--success {
+  color: #0a6b4a;
+  background: rgba(16, 150, 105, 0.12);
+  border-color: rgba(16, 150, 105, 0.3);
+}
+
+html[data-theme='light'] .pill--danger {
+  color: #a91f3c;
+  background: rgba(210, 60, 95, 0.1);
+  border-color: rgba(210, 60, 95, 0.28);
+}
+
+html[data-theme='light'] .pill--violet {
+  color: #6b3fb0;
+}
+
+html[data-theme='light'] .field-label,
+html[data-theme='light'] .option,
+html[data-theme='light'] .import-textarea,
+html[data-theme='light'] .podium-score,
+html[data-theme='light'] .results-row,
+html[data-theme='light'] .class-chip,
+html[data-theme='light'] .hero-badge,
+html[data-theme='light'] .question-category {
+  color: var(--text);
+}
+
+html[data-theme='light'] .question-row-main p,
+html[data-theme='light'] .check-row,
+html[data-theme='light'] .quarter-group-head,
+html[data-theme='light'] .topics-group-head,
+html[data-theme='light'] .ticket-section-head,
+html[data-theme='light'] .podium-stats b {
+  color: var(--muted);
+}
+
+html[data-theme='light'] .topic-chip {
+  color: #5a6c8c;
+  background: rgba(15, 30, 56, 0.035);
+}
+
+html[data-theme='light'] .topic-chip.is-selected {
+  color: #7a4a00;
+  background: rgba(214, 150, 30, 0.16);
+  border-color: rgba(180, 120, 20, 0.42);
+}
+
+html[data-theme='light'] .ticket-chip {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(15, 30, 56, 0.14);
+  color: #5a6c8c;
+}
+
+html[data-theme='light'] .stepper-controls {
+  background: #ffffff;
+  border-color: rgba(15, 30, 56, 0.16);
+}
+
+html[data-theme='light'] .stepper-value {
+  color: var(--text);
+}
+
+html[data-theme='light'] .hero-tagline,
+html[data-theme='light'] .year-note,
+html[data-theme='light'] .reward-label,
+html[data-theme='light'] .owner-hint,
+html[data-theme='light'] .builder-preview-note,
+html[data-theme='light'] .question-row-cat,
+html[data-theme='light'] .mode-badge,
+html[data-theme='light'] .mode-badge--topics,
+html[data-theme='light'] .answer-panel.is-timeout .answer-label,
+html[data-theme='light'] .podium-card.place-1 .podium-place,
+html[data-theme='light'] .quarter-roman,
+html[data-theme='light'] .type-switch button.is-active,
+html[data-theme='light'] .import-file,
+html[data-theme='light'] .category-filters button.is-active,
+html[data-theme='light'] .link-btn:hover {
+  color: #855000;
+}
+
+html[data-theme='light'] .field-error,
+html[data-theme='light'] .confirm-icon--danger,
+html[data-theme='light'] .option-remove:hover,
+html[data-theme='light'] .import-errors,
+html[data-theme='light'] .check-mark,
+html[data-theme='light'] .option.is-wrong .option-letter,
+html[data-theme='light'] .place-badge--3 {
+  color: #a91f3c;
+}
+
+html[data-theme='light'] .confirm-icon--warn {
+  color: #8a5300;
+}
+
+html[data-theme='light'] .game-toast {
+  color: #0a6b4a;
+}
+
+html[data-theme='light'] .game-toast--bad {
+  color: #a91f3c;
+}
+
+html[data-theme='light'] .game-toast--neutral {
+  color: var(--text);
+}
+
+html[data-theme='light'] .result-banner p b {
+  color: var(--text);
+}
+
+html[data-theme='light'] .custom-cta-icon {
+  color: #6b3fb0;
+}
+
+html[data-theme='light'] .help-note {
+  color: #5d3f07;
+}
+
+html[data-theme='light'] .hero-title {
+  text-shadow: 0 10px 40px rgba(21, 40, 74, 0.14);
+}
+
+
+html[data-theme='light'] .builder-mini,
+html[data-theme='light'] .board-card-mini {
+  background: #e9eff9;
+  border-color: rgba(15, 30, 56, 0.16);
+}
+
+html[data-theme='light'] .builder-mini-center,
+html[data-theme='light'] .board-card-mini-center {
+  background:
+    radial-gradient(circle at 50% 20%, var(--accent-soft), transparent 70%),
+    rgba(255, 255, 255, 0.9);
+}
+
+html[data-theme='light'] .board-card-categories span {
+  color: var(--muted);
+}
+
+html[data-theme='light'] .builder-mini-wrap {
+  background:
+    radial-gradient(180px 130px at 50% 0%, var(--page-glow), transparent 70%),
+    #eef3fb;
+}
+
+html[data-theme='light'] .quarter-topics > span {
+  color: var(--muted);
+}
+
+html[data-theme='light'] .quarter-more {
+  color: #855000;
+  background: rgba(214, 150, 30, 0.14);
+}

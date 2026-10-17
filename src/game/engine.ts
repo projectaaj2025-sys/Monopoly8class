@@ -1,3 +1,4 @@
+import { getLocale, plural as pluralLocal, verb as verbLocal } from '../i18n'
 import type {
   BoardCell,
   BonusEvent,
@@ -516,6 +517,7 @@ export function formatNumber(value: number): string {
 
 /** Склонение глагола по названию команды: «Ньютоны бросают», «Молния бросает». */
 export function teamVerb(name: string | undefined, plural: string, singular: string): string {
+  if (getLocale() !== 'ru') return verbLocal(plural, plural)
   const trimmed = (name ?? '').trim().toLowerCase()
   if (!trimmed) return plural
   const last = trimmed.slice(-1)
@@ -524,11 +526,7 @@ export function teamVerb(name: string | undefined, plural: string, singular: str
 }
 
 export function pluralize(n: number, one: string, few: string, many: string): string {
-  const mod10 = n % 10
-  const mod100 = n % 100
-  if (mod10 === 1 && mod100 !== 11) return one
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few
-  return many
+  return pluralLocal(n, one, few, many)
 }
 
 export const themeForGrade = (grade: GradeId): ThemeId => GRADES[grade].theme

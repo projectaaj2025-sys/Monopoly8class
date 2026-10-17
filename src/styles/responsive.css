@@ -885,3 +885,138 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Узкие телефоны: шапка и сетка настроек ───────────────── */
+@media (max-width: 860px) {
+  .setup-stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .setup-main,
+  .setup-aside,
+  .setup-stage > * {
+    min-width: 0;
+  }
+
+  .grade-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .topbar-inner {
+    gap: 7px;
+    padding: 10px 12px;
+  }
+
+  .brand {
+    gap: 9px;
+  }
+
+  .brand-mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-text {
+    font-size: 12px;
+    line-height: 1.05;
+    letter-spacing: -0.2px;
+  }
+
+  .mainnav {
+    gap: 0;
+    margin-left: auto;
+  }
+
+  .mainnav button {
+    padding: 7px;
+  }
+
+  .topbar-right {
+    gap: 6px;
+  }
+
+  .lang-switch {
+    padding: 2px;
+  }
+
+  .lang-switch button {
+    min-width: 22px;
+    padding: 3px 3px;
+    font-size: 9px;
+  }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+@media (max-width: 600px) {
+  .mode-switch {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .mode-switch button {
+    flex: 1 1 128px;
+    min-width: 0;
+    padding: 7px 8px;
+    font-size: 10.5px;
+    white-space: normal;
+    line-height: 1.2;
+    text-align: center;
+  }
+}
+
+@media (max-width: 860px) {
+  .hero {
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0;
+    padding: 26px 18px 24px;
+  }
+
+  .hero-actions {
+    position: static;
+    justify-content: center;
+  }
+
+  .hero-actions .icon-btn {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .tile {
+    padding: 5px 2px 6px;
+  }
+
+  .tile-kicker {
+    font-size: 5px;
+    letter-spacing: 0.2px;
+  }
+
+  .tile-points {
+    font-size: 6px;
+  }
+
+  .tile-icon {
+    display: none;
+  }
+
+  .tile-title {
+    font-family: var(--font-body);
+    font-size: 5.8px;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1.06;
+    padding-bottom: 1px;
+    display: -webkit-box;
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+  }
+}
