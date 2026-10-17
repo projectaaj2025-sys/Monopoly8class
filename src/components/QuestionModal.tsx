@@ -5,6 +5,7 @@ import { sfx } from '../lib/sound'
 import { Modal, Pill } from './ui'
 import { DOMAIN_META } from '../data/themes'
 import { cellKindLabel, formatNumber } from '../game/engine'
+import { QuestionChart } from './QuestionChart'
 
 interface QuestionModalProps {
   open: boolean
@@ -151,6 +152,8 @@ export function QuestionModal({ open, active, team, ownerName, onResolve, onSkip
           <span className="question-mark">?</span>
           <p>{question.text}</p>
         </div>
+
+        {question.chart && <QuestionChart spec={question.chart} />}
 
         {isOpen ? (
           <div className="open-answer-area">

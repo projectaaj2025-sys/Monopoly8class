@@ -1,14 +1,15 @@
-import type { DomainId } from '../../types'
+import type { ChartSpec, DomainId } from '../../types'
 
 export type SeedQuestionKind = 'theory' | 'formula' | 'problem' | 'practice'
 
-/** [тип, вопрос, варианты, номер верного (с нуля), пояснение] */
+/** [тип, вопрос, варианты, номер верного (с нуля), пояснение, график?] */
 export type SeedQuestion = [
   kind: SeedQuestionKind,
   text: string,
   options: string[],
   correct: number,
   explanation: string,
+  chart?: ChartSpec,
 ]
 
 export interface SeedTopic {

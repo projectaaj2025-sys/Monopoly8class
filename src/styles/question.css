@@ -695,3 +695,54 @@
   color: var(--muted-2);
   font-size: 10px;
 }
+
+.question-chart {
+  margin: 12px 0 4px;
+  padding: 10px 12px 6px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(8, 16, 30, 0.55);
+}
+
+.question-chart svg {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.question-chart figcaption {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+  color: rgba(220, 232, 250, 0.62);
+}
+
+.question-chart-tick {
+  fill: rgba(205, 220, 240, 0.66);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.question-chart-axis {
+  fill: rgba(225, 235, 250, 0.85);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.question-chart-legend {
+  fill: rgba(225, 235, 250, 0.8);
+  font-size: 11px;
+}
+
+@media (max-width: 620px) {
+  .question-chart {
+    padding: 8px 6px 4px;
+  }
+
+  .question-chart figcaption {
+    font-size: 11px;
+  }
+}

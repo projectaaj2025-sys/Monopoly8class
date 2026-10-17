@@ -48,10 +48,39 @@ export interface Grade {
 
 export type QuestionKind = 'theory' | 'formula' | 'problem' | 'practice' | 'custom'
 
+/** Точка графика: [значение по оси X, значение по оси Y] */
+export type ChartPoint = [number, number]
+
+export interface ChartSeries {
+  label?: string
+  points: ChartPoint[]
+  /** Пунктирная линия — для сравнения или продолжения графика */
+  dashed?: boolean
+}
+
+/**
+ * Небольшой график к вопросу. Рисуется прямо в модальном окне,
+ * поэтому не требует картинок и работает на любом экране.
+ */
+export interface ChartSpec {
+  xLabel: string
+  yLabel: string
+  series: ChartSeries[]
+  xMin?: number
+  xMax?: number
+  yMin?: number
+  yMax?: number
+  xStep?: number
+  yStep?: number
+  caption?: string
+}
+
 export interface Question {
   id: string
   kind: QuestionKind
   text: string
+  /** График или диаграмма к условию */
+  chart?: ChartSpec
   options?: string[]
   correct?: number
   answer: string

@@ -1,6 +1,9 @@
 import type { Question, QuestionKind } from '../types'
 import { TOPIC_BY_ID, TOPIC_ENTRIES } from './curriculum'
 import { APPLIED_QUESTIONS } from './programs/applied'
+import { GRAPH_QUESTIONS } from './programs/graphs'
+import { PRACTICE_QUESTIONS } from './programs/practice2'
+import { THEORY_QUESTIONS } from './programs/theory2'
 import type { SeedQuestionKind } from './programs/shared'
 
 export const KIND_POINTS: Record<QuestionKind, number> = {
@@ -59,8 +62,14 @@ const shuffleOptions = (
 }
 
 export const BASE_QUESTIONS: Question[] = TOPIC_ENTRIES.flatMap(({ topic, questions }) =>
-  [...questions, ...(APPLIED_QUESTIONS[topic.id] ?? [])].map((seed, index) => {
-    const [kind, text, options, correct, explanation] = seed
+  [
+    ...questions,
+    ...(THEORY_QUESTIONS[topic.id] ?? []),
+    ...(PRACTICE_QUESTIONS[topic.id] ?? []),
+    ...(GRAPH_QUESTIONS[topic.id] ?? []),
+    ...(APPLIED_QUESTIONS[topic.id] ?? []),
+  ].map((seed, index) => {
+    const [kind, text, options, correct, explanation, chart] = seed
     const normalizedKind: QuestionKind = kind as SeedQuestionKind
     const id = `${topic.id}-q${index + 1}`
     const shuffled = shuffleOptions(options, correct, id)
@@ -70,6 +79,7 @@ export const BASE_QUESTIONS: Question[] = TOPIC_ENTRIES.flatMap(({ topic, questi
       grade: topic.grade,
       kind: normalizedKind,
       text,
+      ...(chart ? { chart } : {}),
       options: shuffled.options,
       correct: shuffled.correct,
       answer: shuffled.options[shuffled.correct] ?? '',
