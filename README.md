@@ -48,15 +48,11 @@ npm run preview  # проверка собранной версии
 
 ### Публикация
 
-Сайт раздаётся GitHub Pages из ветки `gh-pages` (лежит собранный `dist`, без исходников):
-
-```bash
-npm run build
-rm -rf /tmp/ghpages && mkdir /tmp/ghpages && cp -r dist/. /tmp/ghpages/
-cd /tmp/ghpages && git init -q && git checkout -q -b gh-pages
-git add -A && git -c user.name=deploy -c user.email=deploy@local commit -qm "deploy"
-git push -f https://github.com/projectaaj2025-sys/Monopoly8class.git gh-pages
-```
+После слияния изменений в `main` GitHub Actions автоматически собирает проект (`npm ci`, `npm run build`)
+и публикует содержимое `dist` на GitHub Pages. Настройка находится в
+[`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml); в настройках Pages
+источником публикации должен быть выбран **GitHub Actions**. При необходимости сборку можно
+запустить вручную на вкладке **Actions → Deploy to GitHub Pages → Run workflow**.
 
 ## Структура проекта
 
