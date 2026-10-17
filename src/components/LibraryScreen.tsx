@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Clock3,
   Copy,
+  Download,
   FileQuestion,
   FlaskConical,
   Layers,
@@ -13,6 +14,7 @@ import {
   Plus,
   Sparkles,
   Trash2,
+  Upload,
   Wand2,
 } from 'lucide-react'
 import type { CustomBoard, ThemeId } from '../types'
@@ -32,6 +34,8 @@ interface LibraryScreenProps {
   onDelete: (board: CustomBoard) => void
   onBack: () => void
   onShowRules: () => void
+  onExportAll: () => void
+  onImport: (file: File | undefined) => void
 }
 
 const THEME_ORDER: ThemeId[] = ['g7', 'g8', 'g9', 'g10', 'g11', 'review']
@@ -47,6 +51,8 @@ export function LibraryScreen({
   onDelete,
   onBack,
   onShowRules,
+  onExportAll,
+  onImport,
 }: LibraryScreenProps) {
   const [deleteTarget, setDeleteTarget] = useState<CustomBoard | null>(null)
   const totalQuestions = boards.reduce((sum, board) => sum + board.questions.length, 0)
@@ -86,6 +92,30 @@ export function LibraryScreen({
           <button type="button" className="btn btn--ghost" onClick={onShowRules}>
             Как играть
           </button>
+          <button
+            type="button"
+            className="icon-btn"
+            onClick={onExportAll}
+            title="Скачать резервную копию всех монополий"
+            aria-label="Скачать резервную копию всех монополий"
+            disabled={boards.length === 0}
+          >
+            <Download size={17} />
+          </button>
+          <label
+            className="icon-btn icon-btn--upload"
+            title="Загрузить монополии из файла"
+          >
+            <Upload size={17} />
+            <input
+              type="file"
+              accept="application/json,.json"
+              onChange={(event) => {
+                onImport(event.target.files?.[0])
+                event.target.value = ''
+              }}
+            />
+          </label>
           <button type="button" className="btn btn--primary btn--lg" onClick={onCreate}>
             <Plus size={18} /> Создать монополию
           </button>

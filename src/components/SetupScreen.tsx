@@ -25,6 +25,7 @@ import {
   QUARTER_LABELS,
   allTopicsOfGrades,
   topicsOfGrade,
+  topicsOfQuarter,
 } from '../data/curriculum'
 import { DOMAIN_META, TEAM_COLORS, THEMES, THEME_ICON } from '../data/themes'
 import { BASE_QUESTIONS } from '../data/questions'
@@ -155,7 +156,7 @@ export function SetupScreen({
     setQuarters((prev) => new Set([...prev, quarterKey(grade, 1)]))
     setTopicIds((prev) => {
       const next = new Set(prev)
-      topicsOfGrade(grade).forEach((topic) => next.add(topic.id))
+      topicsOfQuarter(grade, 1).forEach((topic) => next.add(topic.id))
       return next
     })
   }
@@ -187,6 +188,13 @@ export function SetupScreen({
       else next.add(key)
       return next
     })
+    setTopicIds((prev) => {
+      const next = new Set(prev)
+      const quarterTopics = topicsOfQuarter(grade, quarter)
+      if (quarters.has(key)) quarterTopics.forEach((topic) => next.delete(topic.id))
+      else quarterTopics.forEach((topic) => next.add(topic.id))
+      return next
+    })
   }
 
   const selectAllQuarters = () => {
@@ -198,8 +206,16 @@ export function SetupScreen({
     sfx.tap()
     setMode(nextMode)
     if (nextMode === 'topics' && topicIds.size === 0) {
-      setTopicIds(new Set(gradeTopics.map((topic) => topic.id)))
+      const inherited = gradeTopics.filter((topic) =>
+        quarters.has(quarterKey(topic.grade, topic.quarter)),
+      )
+      setTopicIds(new Set((inherited.length > 0 ? inherited : gradeTopics).map((topic) => topic.id)))
     }
+  }
+
+  const selectAllTopicsAction = () => {
+    sfx.tap()
+    setTopicIds(new Set(gradeTopics.map((topic) => topic.id)))
   }
 
   const toggleTopic = (topic: Topic) => {
@@ -641,6 +657,17 @@ export function SetupScreen({
                       <p>Ничего не найдено. Попробуйте другое слово.</p>
                     </div>
                   )}
+                  {activeTopics.length === 0 && (
+                    <div className="topics-warning">
+                      <CircleHelp size={17} />
+                      <span>
+                        Ни одна тема не выбрана — отметьте темы, иначе игру нельзя начать.
+                      </span>
+                      <button type="button" className="btn btn--ghost btn--sm" onClick={selectAllTopicsAction}>
+                        Выбрать все темы
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -721,6 +748,31 @@ export function SetupScreen({
               </div>
 
               <div className="ticket-divider" />
+
+              <div className="ticket-mode">
+                <span className={`mode-badge mode-badge--${mode}`}>
+                  {mode === 'quarter' ? (
+                    <>
+                      <ListChecks size={12} /> по четвертям
+                    </>
+                  ) : mode === 'year' ? (
+                    <>
+                      <BookOpen size={12} /> {isMulti ? 'вся программа' : 'весь год'}
+                    </>
+                  ) : (
+                    <>
+                      <Search size={12} /> свои темы
+                    </>
+                  )}
+                </span>
+                <span className="ticket-mode-note">
+                  {mode === 'topics'
+                    ? 'выбрано вручную'
+                    : mode === 'year'
+                      ? 'все четверти'
+                      : 'выбранные четверти'}
+                </span>
+              </div>
 
               <div className="ticket-section">
                 <div className="ticket-section-head">

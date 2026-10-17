@@ -22,6 +22,7 @@ import { BuilderScreen } from './components/BuilderScreen'
 import { Modal } from './components/ui'
 import {
   blankBoard,
+  downloadFile,
   ensureSeed,
   loadCustomBoards,
   saveCustomBoards,
@@ -181,6 +182,34 @@ export default function App() {
     showToast('Монополия удалена')
   }
 
+  const importBoards = (file: File | undefined) => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(String(reader.result ?? '')) as CustomBoard[]
+        const valid = (Array.isArray(data) ? data : [data]).filter(
+          (item) => item && typeof item.name === 'string' && Array.isArray(item.questions),
+        )
+        if (valid.length === 0) throw new Error('empty')
+        const now = Date.now()
+        const restored: CustomBoard[] = valid.map((item) => ({
+          ...item,
+          id: uid('board'),
+          createdAt: item.createdAt ?? now,
+          updatedAt: now,
+          isSample: false,
+          questions: item.questions.map((question) => ({ ...question, id: uid('cq') })),
+        }))
+        setBoards((prev) => [...restored, ...prev])
+        showToast(`Загружено монополий: ${restored.length}`)
+      } catch {
+        showToast('Не удалось прочитать файл резервной копии')
+      }
+    }
+    reader.readAsText(file)
+  }
+
   const closeGame = () => {
     setConfig(null)
     setScreen(setupReturnScreen)
@@ -276,6 +305,15 @@ export default function App() {
           onDelete={deleteBoard}
           onBack={() => setScreen('setup')}
           onShowRules={() => setHelpOpen(true)}
+          onExportAll={() => {
+            downloadFile(
+              'fizika-poli-monopolii.json',
+              JSON.stringify(boards, null, 2),
+              'application/json',
+            )
+            showToast('Резервная копия скачана')
+          }}
+          onImport={importBoards}
         />
       )}
 

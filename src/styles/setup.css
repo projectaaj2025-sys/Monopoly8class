@@ -868,7 +868,7 @@
 }
 
 .topics-scroll {
-  max-height: 500px;
+  max-height: 460px;
   overflow-y: auto;
   padding-right: 6px;
   display: flex;
@@ -966,6 +966,32 @@
   padding: 30px;
   color: var(--muted-2);
   font-size: 12px;
+}
+
+.topics-warning {
+  position: relative;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 194, 71, 0.3);
+  background: linear-gradient(180deg, rgba(52, 40, 18, 0.96), rgba(38, 29, 12, 0.98));
+  color: #f0dcae;
+  font-size: 11.5px;
+  line-height: 1.4;
+  box-shadow: 0 -12px 30px -18px rgba(0, 0, 0, 0.9);
+}
+
+.topics-warning svg {
+  flex: 0 0 auto;
+  color: var(--gold);
+}
+
+.topics-warning .btn {
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .setup-aside {
@@ -1146,6 +1172,46 @@
   border-color: rgba(255, 194, 71, 0.26);
 }
 
+.ticket-mode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 2px 0 14px;
+}
+
+.mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 194, 71, 0.26);
+  background: rgba(255, 194, 71, 0.09);
+  color: #e7cd93;
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.mode-badge--topics {
+  border-color: rgba(199, 146, 255, 0.3);
+  background: rgba(199, 146, 255, 0.09);
+  color: #e0c8ff;
+}
+
+.mode-badge--year {
+  border-color: rgba(92, 200, 255, 0.28);
+  background: rgba(92, 200, 255, 0.09);
+  color: #bfe6ff;
+}
+
+.ticket-mode-note {
+  color: var(--muted-2);
+  font-size: 9px;
+}
+
 .ticket-stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1178,12 +1244,16 @@
 
 .ticket-divider {
   height: 1px;
-  margin: 15px 0;
+  margin: 13px 0;
   background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
 }
 
 .ticket-section {
-  margin-bottom: 13px;
+  margin-bottom: 14px;
+}
+
+.ticket-section-head {
+  margin-bottom: 8px;
 }
 
 .ticket-section--row {
