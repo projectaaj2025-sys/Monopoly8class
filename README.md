@@ -30,17 +30,33 @@
 - Демо-монополия «Физика вокруг нас» уже в библиотеке — можно изучить и отредактировать.
 - Всё хранится в localStorage браузера (без сервера), дублирование и удаление игр.
 
+## Открыть сайт
+
+**https://projectaaj2025-sys.github.io/Monopoly8class/** — рабочая версия, ничего устанавливать не нужно.
+
 ## Запуск
 
 ```bash
 npm install
 npm run dev      # http://localhost:5173
-npm run build    # production-сборка
-npm run preview
+npm run build    # production-сборка (base = /Monopoly8class/)
+npm run preview  # проверка собранной версии
 ```
 
 Стек: React 18 + TypeScript + Vite, иконки lucide-react, шрифты Unbounded и Rubik (локально).
 Бэкенд не нужен — прототип полностью клиентский.
+
+### Публикация
+
+Сайт раздаётся GitHub Pages из ветки `gh-pages` (лежит собранный `dist`, без исходников):
+
+```bash
+npm run build
+rm -rf /tmp/ghpages && mkdir /tmp/ghpages && cp -r dist/. /tmp/ghpages/
+cd /tmp/ghpages && git init -q && git checkout -q -b gh-pages
+git add -A && git -c user.name=deploy -c user.email=deploy@local commit -qm "deploy"
+git push -f https://github.com/projectaaj2025-sys/Monopoly8class.git gh-pages
+```
 
 ## Структура проекта
 
