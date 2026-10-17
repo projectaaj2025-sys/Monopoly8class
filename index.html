@@ -3,10 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050a15" />
+    <script>
+      try {
+        var saved = localStorage.getItem('fizika-poli:theme')
+        var light = saved === 'light' || (!saved && window.matchMedia('(prefers-color-scheme: light)').matches)
+        document.documentElement.dataset.theme = light ? 'light' : 'dark'
+      } catch (e) {}
+    </script>
     <meta name="description" content="Физика-Поли — образовательная монополия по физике для 7–11 классов. Выбор класса, четверти, тем, свои задания и монополии." />
     <title>Физика-Поли — монополия по физике</title>
-    <script type="module" crossorigin src="/Monopoly8class/assets/index-UDW3VGr-.js"></script>
-    <link rel="stylesheet" crossorigin href="/Monopoly8class/assets/index-B-I-9SnL.css">
+    <script type="module" crossorigin src="/Monopoly8class/assets/index-BN-5JUPC.js"></script>
+    <link rel="stylesheet" crossorigin href="/Monopoly8class/assets/index-m9JADr9x.css">
   </head>
   <body>
     <div id="root"></div>
