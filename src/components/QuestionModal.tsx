@@ -20,6 +20,7 @@ const KIND_TITLES: Record<string, string> = {
   formula: 'Знание формулы',
   problem: 'Расчётная задача',
   lab: 'Лаборатория',
+  practice: 'Практика: реальная ситуация',
   question: 'Задание учителя',
   custom: 'Задание учителя',
 }
@@ -112,7 +113,9 @@ export function QuestionModal({ open, active, team, ownerName, onResolve, onSkip
               {active.cell.title}
             </Pill>
             <Pill tone="info">{kindLabel}</Pill>
-            {active.cell.kind === 'lab' && <Pill tone="accent">Повышенные баллы</Pill>}
+            {(active.cell.kind === 'lab' || active.cell.kind === 'practice') && (
+              <Pill tone="accent">Повышенные баллы</Pill>
+            )}
           </div>
           <h2 className="question-team">
             Отвечает <span style={{ color: team.color === 'red' ? '#ff9bab' : '#9fc4ff' }}>{team.name}</span>

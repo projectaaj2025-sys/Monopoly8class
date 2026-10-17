@@ -40,7 +40,9 @@ import {
   Thermometer,
   Timer,
   Waves,
+  Weight,
   Wind,
+  Wrench,
   Zap,
   type LucideIcon,
 } from 'lucide-react'
@@ -87,7 +89,9 @@ const ICONS: Record<string, LucideIcon> = {
   Thermometer,
   Timer,
   Waves,
+  Weight,
   Wind,
+  Wrench,
   Zap,
 }
 

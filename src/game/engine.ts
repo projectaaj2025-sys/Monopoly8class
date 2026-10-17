@@ -39,7 +39,7 @@ const CONTENT_SLOTS: { index: number; kind: CellKind }[] = [
   { index: 1, kind: 'topic' },
   { index: 2, kind: 'formula' },
   { index: 3, kind: 'topic' },
-  { index: 4, kind: 'problem' },
+  { index: 4, kind: 'practice' },
   { index: 5, kind: 'topic' },
   { index: 6, kind: 'formula' },
   { index: 7, kind: 'topic' },
@@ -53,10 +53,10 @@ const CONTENT_SLOTS: { index: number; kind: CellKind }[] = [
   { index: 17, kind: 'topic' },
   { index: 18, kind: 'problem' },
   { index: 19, kind: 'topic' },
-  { index: 20, kind: 'formula' },
+  { index: 20, kind: 'practice' },
   { index: 21, kind: 'topic' },
   { index: 23, kind: 'topic' },
-  { index: 24, kind: 'lab' },
+  { index: 24, kind: 'practice' },
   { index: 25, kind: 'formula' },
   { index: 26, kind: 'topic' },
   { index: 27, kind: 'problem' },
@@ -65,6 +65,7 @@ const CONTENT_SLOTS: { index: number; kind: CellKind }[] = [
 const KIND_ICON: Partial<Record<CellKind, string>> = {
   formula: 'Sigma',
   problem: 'Lightbulb',
+  practice: 'Wrench',
   lab: 'FlaskConical',
   question: 'FlaskConical',
 }
@@ -73,6 +74,7 @@ const KIND_POINTS: Partial<Record<CellKind, number>> = {
   topic: 100,
   formula: 150,
   problem: 200,
+  practice: 250,
   lab: 250,
   question: 150,
 }
@@ -80,6 +82,7 @@ const KIND_POINTS: Partial<Record<CellKind, number>> = {
 const KIND_TITLE: Partial<Record<CellKind, string>> = {
   formula: 'ФОРМУЛА',
   problem: 'ЗАДАЧА',
+  practice: 'ПРАКТИКА',
   lab: 'ЛАБОРАТОРИЯ',
   question: 'ЗАДАНИЕ',
 }
@@ -317,10 +320,11 @@ export function pickBonus(): BonusEvent {
 }
 
 const PREFERRED_KINDS: Record<CellKind, Question['kind'][]> = {
-  topic: ['theory', 'problem', 'formula'],
-  formula: ['formula', 'theory', 'problem'],
-  problem: ['problem', 'formula', 'theory'],
-  lab: ['problem', 'theory', 'formula'],
+  topic: ['theory', 'practice', 'problem', 'formula'],
+  formula: ['formula', 'theory', 'problem', 'practice'],
+  problem: ['problem', 'formula', 'practice', 'theory'],
+  practice: ['practice', 'problem', 'theory', 'formula'],
+  lab: ['practice', 'problem', 'theory', 'formula'],
   question: ['custom'],
   start: [],
   bonus: [],
@@ -333,8 +337,12 @@ export interface DrawResult {
 }
 
 /**
- * Подбирает вопрос для клетки: сначала нужного типа и ещё не заданные,
- * затем любые по теме, затем из общего банка.
+ * Подбирает вопрос для клетки.
+ *
+ * Для содержательных клеток тип важнее темы: клетка «Формула» должна получить
+ * формулу из выбранных тем, а не первое практическое задание попавшейся темы.
+ * Поэтому сначала ищем нужный тип по всей подборке, затем — по теме клетки,
+ * и только потом разрешаем другой тип.
  */
 export function drawQuestion(
   cell: BoardCell,
@@ -345,13 +353,22 @@ export function drawQuestion(
   const used = new Set(usedIds)
   const customPool = customBoard?.questions ?? []
 
-  const pick = (pool: Question[], kindFilter?: Question['kind'][]): Question | null => {
-    if (pool.length === 0) return null
-    const kinded = kindFilter ? pool.filter((item) => kindFilter.includes(item.kind)) : pool
-    const base = kinded.length > 0 ? kinded : pool
-    const fresh = base.filter((item) => !used.has(item.id))
-    const finalPool = fresh.length > 0 ? fresh : base
-    const chosen = finalPool[Math.floor(Math.random() * finalPool.length)]
+  const random = <T,>(pool: T[]): T => pool[Math.floor(Math.random() * pool.length)]
+
+  const pickFresh = (pool: Question[], kind?: Question['kind']): Question | null => {
+    const group = pool.filter(
+      (item) => (!kind || item.kind === kind) && !used.has(item.id),
+    )
+    if (group.length === 0) return null
+    const chosen = random(group)
+    used.add(chosen.id)
+    return chosen
+  }
+
+  const pickAny = (pool: Question[], kind?: Question['kind']): Question | null => {
+    const group = pool.filter((item) => !kind || item.kind === kind)
+    if (group.length === 0) return null
+    const chosen = random(group)
     used.add(chosen.id)
     return chosen
   }
@@ -360,19 +377,56 @@ export function drawQuestion(
 
   if (customBoard) {
     const byCategory = customPool.filter((item) => item.category === cell.topicId)
-    question = pick(byCategory, cell.kind === 'lab' ? undefined : undefined)
-    if (!question) question = pick(customPool)
+    question = pickFresh(byCategory) ?? pickAny(byCategory) ?? pickFresh(customPool) ?? pickAny(customPool)
+    return { question, usedIds: used }
+  }
+
+  const byTopic = BASE_QUESTIONS.filter((item) => item.topicId === cell.topicId)
+  const ids = new Set(topics.map((item) => item.id))
+  const selected = BASE_QUESTIONS.filter((item) => item.topicId && ids.has(item.topicId))
+  const kinds = PREFERRED_KINDS[cell.kind]
+
+  if (cell.kind === 'question' || kinds.length === 0) {
+    question = pickFresh(byTopic) ?? pickFresh(selected) ?? pickFresh(BASE_QUESTIONS)
+  } else if (cell.kind === 'topic') {
+    // Клетка названа темой — сначала берём вопрос именно этой темы.
+    for (const pool of [byTopic, selected, BASE_QUESTIONS]) {
+      for (const kind of kinds) {
+        question = pickFresh(pool, kind)
+        if (question) break
+      }
+      if (question) break
+    }
+  } else if (cell.kind === 'lab') {
+    // Лабораторная клетка берёт задание из тем-лабораторий, если они есть.
+    const labIds = new Set(topics.filter((item) => item.lesson === 'lab').map((item) => item.id))
+    const labPool = BASE_QUESTIONS.filter((item) => item.topicId && labIds.has(item.topicId))
+    question = pickFresh(labPool, 'practice') ?? pickFresh(labPool) ?? pickFresh(selected, 'practice')
+    if (!question) {
+      for (const kind of kinds) {
+        for (const pool of [byTopic, selected, BASE_QUESTIONS]) {
+          question = pickFresh(pool, kind)
+          if (question) break
+        }
+        if (question) break
+      }
+    }
+  } else {
+    // Клетка названа типом задания — сначала ищем этот тип среди выбранных тем.
+    for (const kind of kinds) {
+      for (const pool of [byTopic, selected, BASE_QUESTIONS]) {
+        question = pickFresh(pool, kind)
+        if (question) break
+      }
+      if (question) break
+    }
   }
 
   if (!question) {
-    const byTopic = BASE_QUESTIONS.filter((item) => item.topicId === cell.topicId)
-    question = pick(byTopic, PREFERRED_KINDS[cell.kind])
-    if (!question) {
-      const ids = new Set(topics.map((t) => t.id))
-      const selected = BASE_QUESTIONS.filter((item) => item.topicId && ids.has(item.topicId))
-      question = pick(selected, PREFERRED_KINDS[cell.kind])
+    for (const pool of [byTopic, selected, BASE_QUESTIONS]) {
+      question = pickAny(pool)
+      if (question) break
     }
-    if (!question) question = pick(BASE_QUESTIONS, PREFERRED_KINDS[cell.kind])
   }
 
   return { question, usedIds: used }
@@ -392,6 +446,8 @@ export function cellKindLabel(kind: CellKind): string {
       return 'Ракета'
     case 'lab':
       return 'Лаборатория'
+    case 'practice':
+      return 'Практика'
     case 'problem':
       return 'Задача'
     case 'formula':

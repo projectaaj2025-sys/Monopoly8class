@@ -20,12 +20,18 @@ export interface Topic {
   short: string
   domain: DomainId
   icon: string
+  /** Код цели обучения из КТП, например 8.4.2.6 */
+  goal?: string
+  /** Урок, лабораторная или практическая работа */
+  lesson?: 'lesson' | 'lab' | 'practice'
 }
 
 export interface Quarter {
   number: number
   title: string
   topics: Topic[]
+  /** Часы по КТП */
+  hours?: number
 }
 
 export interface Grade {
@@ -35,9 +41,12 @@ export interface Grade {
   description: string
   theme: ThemeId
   quarters: Quarter[]
+  /** Годовая нагрузка по КТП */
+  hours?: number
+  note?: string
 }
 
-export type QuestionKind = 'theory' | 'formula' | 'problem' | 'custom'
+export type QuestionKind = 'theory' | 'formula' | 'problem' | 'practice' | 'custom'
 
 export interface Question {
   id: string
@@ -75,6 +84,7 @@ export type CellKind =
   | 'bonus'
   | 'rocket'
   | 'lab'
+  | 'practice'
   | 'topic'
   | 'problem'
   | 'formula'
@@ -140,7 +150,7 @@ export interface ActiveQuestion {
   question: Question
   cell: BoardCell
   points: number
-  source: 'topic' | 'problem' | 'formula' | 'lab' | 'custom'
+  source: 'topic' | 'problem' | 'formula' | 'lab' | 'practice' | 'custom'
 }
 
 export interface LogEntry {

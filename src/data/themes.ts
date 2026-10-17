@@ -197,6 +197,7 @@ export const SPECIAL_COLORS = {
   bonus2: 'linear-gradient(145deg, #d8f3ff 0%, #99dcff 50%, #5fb8e8 100%)',
   rocket: 'linear-gradient(145deg, #ffe6a9 0%, #ffc75a 50%, #ee9b26 100%)',
   lab: 'linear-gradient(145deg, #e4d6ff 0%, #bb95ff 50%, #8a5ce6 100%)',
+  practice: 'linear-gradient(145deg, #c8f7e1 0%, #7fe0b8 50%, #2aa877 100%)',
   problem: 'linear-gradient(145deg, #ffcfae 0%, #ff9a66 50%, #e56a3e 100%)',
   formula: 'linear-gradient(145deg, #fff3b8 0%, #ffda6b 50%, #e8b52d 100%)',
 }

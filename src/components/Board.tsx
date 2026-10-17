@@ -3,11 +3,6 @@ import type { BoardCell, GameConfig, Team } from '../types'
 import { THEMES, TEAM_COLORS, DOMAIN_META, SPECIAL_COLORS } from '../data/themes'
 import { Icon } from './Icon'
 
-const softBreak = (value: string): string => {
-  if (value.length <= 9) return value
-  return value.replace(/(.{6,8})(?=[А-ЯЁA-Z])/g, '$1\u00AD')
-}
-
 export function gridPosition(index: number): { gridRow: number; gridColumn: number } {
   if (index === 0) return { gridRow: 1, gridColumn: 1 }
   if (index < 8) return { gridRow: 1, gridColumn: index + 1 }
@@ -32,6 +27,7 @@ export function tileBackground(cell: BoardCell): string {
   }
   if (cell.kind === 'rocket') return SPECIAL_COLORS.rocket
   if (cell.kind === 'lab') return SPECIAL_COLORS.lab
+  if (cell.kind === 'practice') return SPECIAL_COLORS.practice
   if (cell.kind === 'problem') return SPECIAL_COLORS.problem
   if (cell.kind === 'formula') return SPECIAL_COLORS.formula
   if (cell.kind === 'question') return SPECIAL_COLORS.bonus
@@ -130,7 +126,7 @@ export function Board({
                     !isCorner && cell.title.length > 9 ? 'tile-title--long' : ''
                   }`}
                 >
-                  {isCorner ? tileKindLabel[cell.kind] ?? cell.title : softBreak(cell.title)}
+                  {isCorner ? tileKindLabel[cell.kind] ?? cell.title : cell.title}
                 </span>
                 {isCorner && cell.subtitle && <span className="tile-caption">{cell.subtitle}</span>}
 

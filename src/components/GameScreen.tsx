@@ -69,7 +69,12 @@ const PIP_MAP: Record<number, number[]> = {
 }
 
 const isContentCell = (kind: string): boolean =>
-  kind === 'topic' || kind === 'formula' || kind === 'problem' || kind === 'lab' || kind === 'question'
+  kind === 'topic' ||
+  kind === 'formula' ||
+  kind === 'problem' ||
+  kind === 'practice' ||
+  kind === 'lab' ||
+  kind === 'question'
 
 const initialLogs = (config: GameConfig): LogEntry[] => [
   {

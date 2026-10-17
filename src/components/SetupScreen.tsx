@@ -396,7 +396,9 @@ export function SetupScreen({
                     <span className="grade-emoji"><Icon name={THEME_ICON[grade.theme]} size={21} /></span>
                     <span className="grade-label">{grade.label}</span>
                     <span className="grade-tagline">{gradeTheme.name}</span>
-                    <span className="grade-meta">{pluralTopics(topicsOfGrade(grade.id).length)}</span>
+                    <span className="grade-meta">
+                      {pluralTopics(topicsOfGrade(grade.id).length)} · {grade.hours ?? 68} ч
+                    </span>
                     <span className="grade-sheen" aria-hidden />
                   </button>
                 )
@@ -526,7 +528,10 @@ export function SetupScreen({
                                 <span className="quarter-more">+{quarter.topics.length - 3}</span>
                               )}
                             </div>
-                            <div className="quarter-foot">{pluralTopics(quarter.topics.length)}</div>
+                            <div className="quarter-foot">
+                              {pluralTopics(quarter.topics.length)}
+                              {quarter.hours ? ` · ${quarter.hours} ч` : ''}
+                            </div>
                           </button>
                         )
                       })}
@@ -634,12 +639,14 @@ export function SetupScreen({
                                       type="button"
                                       className={`topic-chip ${selected ? 'is-selected' : ''}`}
                                       onClick={() => toggleTopic(topic)}
-                                      title={topic.title}
+                                      title={`${topic.title}${topic.goal ? ` · цель ${topic.goal}` : ''}`}
                                       aria-pressed={selected}
                                       style={{ '--dot': domain.color } as CSSProperties}
                                     >
                                       <span className="topic-dot" />
                                       {topic.short}
+                                      {topic.lesson === 'lab' && <span className="topic-kind">ЛР</span>}
+                                      {topic.lesson === 'practice' && <span className="topic-kind">ПР</span>}
                                       {selected && <Check size={12} />}
                                     </button>
                                   )
@@ -867,7 +874,7 @@ export function SetupScreen({
             <BookOpen size={14} /> 7–11 классы · итоговые повторения · авторские задания
           </span>
           <span>
-            <Trophy size={14} /> {pluralQuestions(BASE_QUESTIONS.length)} в демо-банке
+            <Trophy size={14} /> {pluralQuestions(BASE_QUESTIONS.length)} в банке заданий
           </span>
         </div>
       </footer>
