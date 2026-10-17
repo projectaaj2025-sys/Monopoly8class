@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/Monopoly8class/' : '/',
   plugins: [react()],
   server: {
     host: '0.0.0.0',
@@ -9,4 +10,4 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: true,
   },
-})
+}))

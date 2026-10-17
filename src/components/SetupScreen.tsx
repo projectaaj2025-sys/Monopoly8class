@@ -42,6 +42,7 @@ import { sfx } from '../lib/sound'
 import { gridPosition, tileBackground } from './Board'
 import { Stepper } from './ui'
 import { Icon } from './Icon'
+import { assetUrl } from '../utils/asset'
 
 type Mode = 'quarter' | 'year' | 'topics'
 
@@ -303,7 +304,7 @@ export function SetupScreen({
     <div className="setup-page">
       <section className="hero">
         <div className="hero-bg" aria-hidden>
-          <img src="/img/physics-center.jpg" alt="" />
+          <img src={assetUrl('img/physics-center.jpg')} alt="" />
         </div>
         <div className="hero-veil" aria-hidden />
         <div className="hero-inner">

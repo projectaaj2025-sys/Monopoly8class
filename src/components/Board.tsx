@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from 'react'
 import type { BoardCell, GameConfig, Team } from '../types'
 import { THEMES, TEAM_COLORS, DOMAIN_META, SPECIAL_COLORS } from '../data/themes'
 import { Icon } from './Icon'
+import { assetUrl } from '../utils/asset'
 
 export function gridPosition(index: number): { gridRow: number; gridColumn: number } {
   if (index === 0) return { gridRow: 1, gridColumn: 1 }
@@ -75,7 +76,7 @@ export function Board({
       <div className="board-frame-inner">
         <div className="board-grid">
           <div className="board-art" aria-hidden>
-            <img src="/img/physics-center.jpg" alt="" />
+            <img src={assetUrl('img/physics-center.jpg')} alt="" />
             <div className="board-art-tint" />
             <div className="board-art-vignette" />
           </div>
