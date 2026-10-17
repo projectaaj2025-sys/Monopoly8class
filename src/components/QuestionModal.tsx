@@ -163,9 +163,7 @@ export function QuestionModal({
             <Pill tone="info">{kindLabel}</Pill>
             {(active.cell.kind === 'lab' || active.cell.kind === 'practice') && <Pill tone="accent">{t("Повышенные баллы")}</Pill>}
           </div>
-          <h2 className="question-team">{t("Отвечает")}{" "}<span style={{
-            color: team.color === 'red' ? '#ff9bab' : '#9fc4ff'
-          }}>{team.name}</span>
+          <h2 className="question-team">{t("Отвечает")}{" "}<span className={team.color === 'red' ? 'question-team-name is-red' : 'question-team-name'}>{team.name}</span>
           </h2>
         </div>
         <div className="question-reward">

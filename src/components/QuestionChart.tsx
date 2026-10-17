@@ -5,7 +5,7 @@ import { t } from '../i18n'
 const W = 520
 const H = 300
 const M = { top: 34, right: 22, bottom: 48, left: 62 }
-const COLORS = ['#f7b955', '#5fd6c4', '#8ea8ff', '#ff9bab']
+const seriesColor = (index: number) => `var(--chart-s${index % 4})`
 
 const niceStep = (range: number, target = 5): number => {
   if (!Number.isFinite(range) || range <= 0) return 1
@@ -80,7 +80,7 @@ export function QuestionChart({ spec }: { spec: ChartSpec }) {
             x2={px(value)}
             y1={M.top}
             y2={M.top + plotH}
-            stroke="rgba(255,255,255,0.08)"
+            style={{ stroke: 'var(--chart-grid)' }}
             strokeWidth={1}
           />
         ))}
@@ -91,7 +91,7 @@ export function QuestionChart({ spec }: { spec: ChartSpec }) {
             x2={M.left + plotW}
             y1={py(value)}
             y2={py(value)}
-            stroke="rgba(255,255,255,0.08)"
+            style={{ stroke: 'var(--chart-grid)' }}
             strokeWidth={1}
           />
         ))}
@@ -102,7 +102,7 @@ export function QuestionChart({ spec }: { spec: ChartSpec }) {
           x2={xZero}
           y1={M.top}
           y2={M.top + plotH}
-          stroke="rgba(255,255,255,0.42)"
+          style={{ stroke: 'var(--chart-axis)' }}
           strokeWidth={1.4}
         />
         <line
@@ -110,7 +110,7 @@ export function QuestionChart({ spec }: { spec: ChartSpec }) {
           x2={M.left + plotW}
           y1={yZero}
           y2={yZero}
-          stroke="rgba(255,255,255,0.42)"
+          style={{ stroke: 'var(--chart-axis)' }}
           strokeWidth={1.4}
         />
 
@@ -160,14 +160,14 @@ export function QuestionChart({ spec }: { spec: ChartSpec }) {
         {/* линии графиков */}
         <g clipPath={`url(#plot-${clipId})`}>
           {spec.series.map((series, index) => {
-            const color = COLORS[index % COLORS.length]
+            const color = seriesColor(index)
             const sorted = [...series.points].sort((a, b) => a[0] - b[0])
             return (
               <g key={`series-${index}`}>
                 <polyline
                   points={sorted.map(([x, y]) => `${px(x)},${py(y)}`).join(' ')}
                   fill="none"
-                  stroke={color}
+                  style={{ stroke: color }}
                   strokeWidth={2.6}
                   strokeLinejoin="round"
                   strokeLinecap="round"
@@ -180,8 +180,7 @@ export function QuestionChart({ spec }: { spec: ChartSpec }) {
                       cx={px(x)}
                       cy={py(y)}
                       r={3.4}
-                      fill="#0c1626"
-                      stroke={color}
+                      style={{ fill: 'var(--chart-point)', stroke: color }}
                       strokeWidth={2}
                     />
                   ))}
@@ -203,7 +202,7 @@ export function QuestionChart({ spec }: { spec: ChartSpec }) {
                     x2={legendX + 20}
                     y1={18}
                     y2={18}
-                    stroke={COLORS[index % COLORS.length]}
+                    style={{ stroke: seriesColor(index) }}
                     strokeWidth={2.6}
                     strokeDasharray={series.dashed ? '6 4' : undefined}
                   />

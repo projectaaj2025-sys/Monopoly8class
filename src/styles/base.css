@@ -17,6 +17,17 @@
   --red: #ff738c;
   --violet: #c792ff;
   --radius: 26px;
+  /* Графики: сетка, оси и серии — переопределяются светлой темой */
+  --chart-grid: rgba(255, 255, 255, 0.08);
+  --chart-axis: rgba(255, 255, 255, 0.42);
+  --chart-tick: rgba(205, 220, 240, 0.66);
+  --chart-axis-text: rgba(225, 235, 250, 0.85);
+  --chart-legend: rgba(225, 235, 250, 0.8);
+  --chart-point: #0c1626;
+  --chart-s0: #f7b955;
+  --chart-s1: #5fd6c4;
+  --chart-s2: #8ea8ff;
+  --chart-s3: #ff9bab;
   --font-head: 'Unbounded', 'Rubik', system-ui, sans-serif;
   --font-body: 'Rubik', system-ui, -apple-system, sans-serif;
   --font-emoji: 'Fizika Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
