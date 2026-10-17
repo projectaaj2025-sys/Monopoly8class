@@ -21,5 +21,5 @@ export const applyTheme = (mode: ThemeMode) => {
     /* ignore */
   }
   const meta = document.querySelector('meta[name="theme-color"]')
-  if (meta) meta.setAttribute('content', mode === 'light' ? '#eef2f9' : '#050a15')
+  if (meta) meta.setAttribute('content', mode === 'light' ? '#e8eef8' : '#050a15')
 }
