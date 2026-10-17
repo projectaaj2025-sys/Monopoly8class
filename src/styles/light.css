@@ -5,22 +5,22 @@
 
 :root[data-theme='light'] {
   --ink-rgb: 15, 30, 56;
-  --bg: #eef2f9;
-  --bg-2: #e6ecf7;
+  --bg: #e8eef8;
+  --bg-2: #dfe8f5;
   --bg-3: #ffffff;
-  --panel: rgba(255, 255, 255, 0.9);
+  --panel: rgba(255, 255, 255, 0.94);
   --panel-solid: #ffffff;
-  --line: rgba(15, 30, 56, 0.1);
-  --line-strong: rgba(15, 30, 56, 0.18);
+  --line: rgba(15, 30, 56, 0.16);
+  --line-strong: rgba(15, 30, 56, 0.26);
   --text: #0f1e38;
-  --muted: #4f6288;
-  --muted-2: #71839f;
-  --gold: #b26b00;
-  --gold-2: #d97f0c;
+  --muted: #405372;
+  --muted-2: #586b86;
+  --gold: #985900;
+  --gold-2: #b66c08;
   --gold-soft: rgba(214, 150, 30, 0.14);
-  --green: #0d8f63;
-  --red: #d23c5f;
-  --violet: #7a44cc;
+  --green: #087b55;
+  --red: #b82a4c;
+  --violet: #6838ae;
   /* Графики: сетка, оси и серии на светлом фоне */
   --chart-grid: rgba(15, 30, 56, 0.09);
   --chart-axis: rgba(15, 30, 56, 0.38);
@@ -55,10 +55,10 @@ html[data-theme='light'] ::-webkit-scrollbar-thumb {
 
 html[data-theme='light'] .app {
   background:
-    radial-gradient(1100px 620px at 12% -8%, rgba(120, 160, 245, 0.26), transparent 68%),
-    radial-gradient(900px 720px at 100% 4%, rgba(168, 128, 232, 0.16), transparent 70%),
-    radial-gradient(900px 700px at 50% 110%, rgba(255, 186, 92, 0.16), transparent 70%),
-    linear-gradient(180deg, #f2f6fd 0%, #eef2fa 48%, #e9eef8 100%);
+    radial-gradient(1100px 620px at 12% -8%, rgba(120, 160, 245, 0.2), transparent 68%),
+    radial-gradient(900px 720px at 100% 4%, rgba(168, 128, 232, 0.12), transparent 70%),
+    radial-gradient(900px 700px at 50% 110%, rgba(255, 186, 92, 0.12), transparent 70%),
+    linear-gradient(180deg, #eef3fb 0%, #e8eef8 48%, #e2eaf6 100%);
 }
 
 html[data-theme='light'] .app-glow {
@@ -72,8 +72,8 @@ html[data-theme='light'] .app-stars {
 /* ─── Шапка и базовые поверхности ─── */
 
 html[data-theme='light'] .topbar {
-  background: rgba(250, 252, 255, 0.82);
-  border-bottom-color: rgba(15, 30, 56, 0.1);
+  background: rgba(250, 252, 255, 0.94);
+  border-bottom-color: var(--line);
   box-shadow: 0 12px 30px -26px rgba(15, 30, 56, 0.5);
 }
 
@@ -109,7 +109,7 @@ html[data-theme='light'] .panel,
 html[data-theme='light'] .team-panel,
 html[data-theme='light'] .feed-panel {
   background: linear-gradient(180deg, #ffffff 0%, #f8fafd 100%);
-  border-color: rgba(15, 30, 56, 0.1);
+  border-color: var(--line);
   box-shadow:
     0 26px 60px -46px rgba(21, 40, 74, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
@@ -184,57 +184,77 @@ html[data-theme='light'] .icon-btn--ghost {
 
 /* ─── Настройка игры ─── */
 
+/* Иллюстрация изначально тёмная: светлая «пелена» скрывала её почти полностью.
+   Оставляем фото контрастным акцентом среди светлых поверхностей. */
 html[data-theme='light'] .hero {
-  border-color: rgba(15, 30, 56, 0.12);
-  box-shadow: 0 40px 80px -60px rgba(21, 40, 74, 0.6);
+  background: #07152b;
+  border-color: rgba(21, 43, 76, 0.6);
+  box-shadow: 0 28px 60px -35px rgba(21, 40, 74, 0.65);
 }
 
 html[data-theme='light'] .hero-bg img {
-  filter: brightness(1.08) saturate(1.02);
+  filter: brightness(1.12) saturate(1.15) contrast(1.06);
 }
 
 html[data-theme='light'] .hero-veil {
   background:
-    radial-gradient(ellipse at 50% 46%, rgba(244, 248, 255, 0.62) 0%, rgba(238, 244, 253, 0.8) 46%, rgba(232, 239, 250, 0.94) 100%),
-    linear-gradient(180deg, rgba(246, 250, 255, 0.5), rgba(236, 242, 251, 0.9));
-}
-
-html[data-theme='light'] .hero-title,
-html[data-theme='light'] .hero p,
-html[data-theme='light'] .hero-sub {
-  color: var(--text);
-  text-shadow: none;
+    radial-gradient(ellipse at 50% 50%, rgba(4, 12, 28, 0.28) 0%, rgba(4, 12, 28, 0.1) 54%, rgba(4, 12, 28, 0.18) 100%),
+    linear-gradient(180deg, rgba(4, 12, 28, 0.09), transparent 40%, rgba(4, 12, 28, 0.22));
 }
 
 html[data-theme='light'] .hero-badge,
 html[data-theme='light'] .hero-stats span {
-  background: rgba(255, 255, 255, 0.78);
-  border-color: rgba(15, 30, 56, 0.12);
-  color: var(--text);
+  background: rgba(5, 15, 34, 0.78);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #f5f8ff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-html[data-theme='light'] .hero-actions .btn {
-  background: rgba(255, 255, 255, 0.82);
-  border-color: rgba(15, 30, 56, 0.16);
-  color: var(--text);
+html[data-theme='light'] .hero-badge {
+  font-weight: 600;
+}
+
+html[data-theme='light'] .hero-badge-dot {
+  background: #ffd16b;
+  box-shadow: 0 0 10px rgba(255, 194, 71, 0.9);
+}
+
+html[data-theme='light'] .hero .hero-tagline {
+  color: #eef3ff;
+  text-shadow: 0 2px 12px rgba(2, 8, 20, 0.75);
+}
+
+html[data-theme='light'] .hero-actions .btn,
+html[data-theme='light'] .hero-actions .icon-btn {
+  background: rgba(5, 15, 34, 0.78);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #f5f8ff;
+}
+
+html[data-theme='light'] .hero-actions .btn:hover,
+html[data-theme='light'] .hero-actions .icon-btn:hover {
+  background: rgba(21, 42, 70, 0.9);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 html[data-theme='light'] .hero-cta {
-  box-shadow: 0 18px 40px -20px rgba(190, 120, 10, 0.7);
+  box-shadow: 0 16px 32px -12px rgba(4, 10, 22, 0.65);
 }
 
 html[data-theme='light'] .hero-title {
-  background: linear-gradient(180deg, #a86200 4%, #c97a10 32%, #a85e05 58%, #8a4a04 82%, #6e3a02 100%);
+  background: linear-gradient(180deg, #fff8dd 4%, #ffe2a0 32%, #ffc247 58%, #f4a63b 82%, #e8891c 100%);
   -webkit-background-clip: text;
   background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   filter:
-    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.55))
-    drop-shadow(0 14px 28px rgba(120, 70, 0, 0.14));
+    drop-shadow(0 2px 1px rgba(2, 8, 20, 0.7))
+    drop-shadow(0 12px 24px rgba(2, 8, 20, 0.55));
 }
 
 html[data-theme='light'] .hero-title-dash {
-  color: #a86200;
-  -webkit-text-fill-color: #a86200;
+  color: #fff4cf;
+  -webkit-text-fill-color: #fff4cf;
 }
 
 html[data-theme='light'] .preset-icon {
@@ -259,11 +279,12 @@ html[data-theme='light'] .mini-center small {
 
 html[data-theme='light'] .grade-card {
   background: linear-gradient(180deg, #ffffff, #f5f8fd);
-  border-color: rgba(15, 30, 56, 0.12);
+  border-color: rgba(15, 30, 56, 0.18);
   box-shadow: 0 20px 45px -38px rgba(21, 40, 74, 0.5);
 }
 
 html[data-theme='light'] .grade-card.is-selected {
+  border-color: color-mix(in srgb, var(--grade-accent) 65%, #203252);
   background:
     radial-gradient(240px 160px at 50% 0%, color-mix(in srgb, var(--grade-accent) 20%, transparent), transparent 75%),
     linear-gradient(180deg, #ffffff, #f7faff);
@@ -273,8 +294,8 @@ html[data-theme='light'] .mode-switch,
 html[data-theme='light'] .segmented,
 html[data-theme='light'] .points-picker,
 html[data-theme='light'] .type-switch {
-  background: rgba(15, 30, 56, 0.05);
-  border-color: rgba(15, 30, 56, 0.12);
+  background: rgba(15, 30, 56, 0.07);
+  border-color: var(--line);
 }
 
 html[data-theme='light'] .mode-switch button,
@@ -294,7 +315,7 @@ html[data-theme='light'] .topic-chip,
 html[data-theme='light'] .preset-card,
 html[data-theme='light'] .ticket-preview {
   background: #ffffff;
-  border-color: rgba(15, 30, 56, 0.12);
+  border-color: var(--line);
 }
 
 html[data-theme='light'] .topic-chip.is-selected,
@@ -659,7 +680,6 @@ html[data-theme='light'] .import-textarea,
 html[data-theme='light'] .podium-score,
 html[data-theme='light'] .results-row,
 html[data-theme='light'] .class-chip,
-html[data-theme='light'] .hero-badge,
 html[data-theme='light'] .question-category {
   color: var(--text);
 }
@@ -717,7 +737,6 @@ html[data-theme='light'] .stepper-value {
   color: var(--text);
 }
 
-html[data-theme='light'] .hero-tagline,
 html[data-theme='light'] .year-note,
 html[data-theme='light'] .reward-label,
 html[data-theme='light'] .owner-hint,
@@ -771,11 +790,6 @@ html[data-theme='light'] .custom-cta-icon {
 html[data-theme='light'] .help-note {
   color: #5d3f07;
 }
-
-html[data-theme='light'] .hero-title {
-  text-shadow: 0 10px 40px rgba(21, 40, 74, 0.14);
-}
-
 
 html[data-theme='light'] .builder-mini,
 html[data-theme='light'] .board-card-mini {
