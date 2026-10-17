@@ -153,12 +153,24 @@
   }
 
   .game-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    grid-template-columns: none;
+  }
+
+  .board-column {
+    order: 1;
   }
 
   .team-panel {
+    order: 2;
     position: static;
     max-height: none;
+  }
+
+  .feed-panel {
+    order: 3;
   }
 
   .team-list {
