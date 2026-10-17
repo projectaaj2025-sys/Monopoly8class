@@ -36,6 +36,14 @@
   font-weight: 600;
 }
 
+.question-team-name {
+  color: #9fc4ff;
+}
+
+.question-team-name.is-red {
+  color: #ff9bab;
+}
+
 .question-reward {
   flex: 0 0 auto;
   padding: 9px 14px;
@@ -721,19 +729,19 @@
 }
 
 .question-chart-tick {
-  fill: rgba(205, 220, 240, 0.66);
+  fill: var(--chart-tick);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
 
 .question-chart-axis {
-  fill: rgba(225, 235, 250, 0.85);
+  fill: var(--chart-axis-text);
   font-size: 12px;
   font-weight: 600;
 }
 
 .question-chart-legend {
-  fill: rgba(225, 235, 250, 0.8);
+  fill: var(--chart-legend);
   font-size: 11px;
 }
 
