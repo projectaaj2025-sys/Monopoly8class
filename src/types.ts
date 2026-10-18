@@ -146,6 +146,9 @@ export interface Team extends TeamTemplate {
   captures: number
 }
 
+/** Формат подборки содержания — влияет на форму кубика и подпись игры */
+export type GameFormat = 'quarter' | 'year' | 'topics' | 'custom'
+
 export interface GameConfig {
   source: 'curriculum' | 'custom'
   title: string
@@ -157,6 +160,8 @@ export interface GameConfig {
   maxMoves: number
   teamTemplates: TeamTemplate[]
   rounds: number
+  /** Формат игры: четверть, весь год, свои темы или авторская монополия */
+  format: GameFormat
 }
 
 export interface BonusEvent {
@@ -189,3 +194,56 @@ export interface LogEntry {
 }
 
 export type GamePhase = 'idle' | 'moving' | 'question' | 'bonus' | 'event' | 'finished'
+
+/** Состояние незавершённой игры — для возврата к ней позже */
+export interface GameSaveState {
+  config: GameConfig
+  teams: Team[]
+  activeIndex: number
+  turn: number
+  owners: Record<number, string>
+  logs: LogEntry[]
+  die: number
+  rollNonce: number
+  /** Вопрос/бонус открыты — восстановим модалку */
+  phase: 'idle' | 'question' | 'event'
+  activeQuestion: ActiveQuestion | null
+  pendingEvent: (BonusEvent & { eyebrow?: string }) | null
+  usedIds: string[]
+  savedAt: number
+}
+
+/** Краткая сводка сохранения для баннера на экране настройки */
+export interface GameSaveSummary {
+  title: string
+  subtitle: string
+  themeId: ThemeId
+  savedAt: number
+  turn: number
+  maxMoves: number
+  teams: { name: string; emoji: string; color: string; score: number; position: number }[]
+}
+
+/** Запись завершённой игры — история прохождений */
+export interface GameRecord {
+  id: string
+  finishedAt: number
+  title: string
+  subtitle: string
+  themeId: ThemeId
+  format: GameFormat
+  source: 'curriculum' | 'custom'
+  winner: string[]
+  turns: number
+  captured: number
+  totalCells: number
+  teams: {
+    name: string
+    emoji: string
+    color: string
+    score: number
+    correct: number
+    wrong: number
+    captures: number
+  }[]
+}

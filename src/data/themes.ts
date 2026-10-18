@@ -1,4 +1,5 @@
-import type { DomainId, ThemeId } from '../types'
+import type { CSSProperties } from 'react'
+import type { DomainId, GameFormat, ThemeId } from '../types'
 
 export interface BoardTheme {
   id: ThemeId
@@ -21,6 +22,23 @@ export interface BoardTheme {
   ribbon: string
   cta: string
   ctaText: string
+  /** Дизайн кубика для этого класса */
+  die: DieDesign
+}
+
+export interface DieDesign {
+  /** Название дизайна кубика */
+  name: string
+  /** Грань кубика (градиент) */
+  face: string
+  /** Цвет точек */
+  pip: string
+  /** Цвет граней/теней */
+  edge: string
+  /** Скругление углов в % */
+  radius: number
+  /** Свечение при броске */
+  glow: string
 }
 
 export const THEMES: Record<ThemeId, BoardTheme> = {
@@ -45,6 +63,14 @@ export const THEMES: Record<ThemeId, BoardTheme> = {
     ribbon: 'linear-gradient(100deg, #ffdf8a, #ffb13d 45%, #e9822b)',
     cta: 'linear-gradient(180deg, #ffe19a, #ffb93e 52%, #f19422)',
     ctaText: '#3b2204',
+    die: {
+      name: 'Классический',
+      face: 'linear-gradient(150deg, #ffffff 0%, #eef3fb 55%, #d5e0f2 100%)',
+      pip: '#14213d',
+      edge: '#b9c9e2',
+      radius: 22,
+      glow: 'rgba(255, 194, 71, 0.55)',
+    },
   },
   g8: {
     id: 'g8',
@@ -67,6 +93,14 @@ export const THEMES: Record<ThemeId, BoardTheme> = {
     ribbon: 'linear-gradient(100deg, #ffc2c9, #ff6f85 45%, #d94a6b)',
     cta: 'linear-gradient(180deg, #ffc4cb, #ff6f85 52%, #e24d6b)',
     ctaText: '#370811',
+    die: {
+      name: 'Тепловой',
+      face: 'linear-gradient(150deg, #fff3f0 0%, #ffd9d2 55%, #ffb6a6 100%)',
+      pip: '#571420',
+      edge: '#e89a8f',
+      radius: 22,
+      glow: 'rgba(255, 111, 133, 0.55)',
+    },
   },
   g9: {
     id: 'g9',
@@ -89,6 +123,14 @@ export const THEMES: Record<ThemeId, BoardTheme> = {
     ribbon: 'linear-gradient(100deg, #b9ecff, #5cc8ff 45%, #4a7cf0)',
     cta: 'linear-gradient(180deg, #c4f1ff, #56c4ff 52%, #3f8de8)',
     ctaText: '#04213b',
+    die: {
+      name: 'Стеклянный',
+      face: 'linear-gradient(150deg, #f4fcff 0%, #cfeeff 55%, #9fd8ff 100%)',
+      pip: '#0a2c4a',
+      edge: '#8ec7ef',
+      radius: 28,
+      glow: 'rgba(92, 200, 255, 0.55)',
+    },
   },
   g10: {
     id: 'g10',
@@ -111,6 +153,14 @@ export const THEMES: Record<ThemeId, BoardTheme> = {
     ribbon: 'linear-gradient(100deg, #c8ffe9, #4fe0a8 45%, #21b289)',
     cta: 'linear-gradient(180deg, #c8ffe9, #4fe0a8 52%, #22ae86)',
     ctaText: '#03271d',
+    die: {
+      name: 'Мятный',
+      face: 'linear-gradient(150deg, #f2fff9 0%, #c9f5e3 55%, #8fe6c2 100%)',
+      pip: '#06382b',
+      edge: '#7fd4b4',
+      radius: 28,
+      glow: 'rgba(79, 224, 168, 0.55)',
+    },
   },
   g11: {
     id: 'g11',
@@ -133,6 +183,14 @@ export const THEMES: Record<ThemeId, BoardTheme> = {
     ribbon: 'linear-gradient(100deg, #eed8ff, #c792ff 45%, #9a55e8)',
     cta: 'linear-gradient(180deg, #ecd6ff, #c08bff 52%, #9555e0)',
     ctaText: '#240a3c',
+    die: {
+      name: 'Кристалл',
+      face: 'linear-gradient(150deg, #f9f3ff 0%, #e6d0ff 55%, #cba6ff 100%)',
+      pip: '#2b0a4a',
+      edge: '#b58fe8',
+      radius: 22,
+      glow: 'rgba(199, 146, 255, 0.55)',
+    },
   },
   review: {
     id: 'review',
@@ -155,6 +213,14 @@ export const THEMES: Record<ThemeId, BoardTheme> = {
     ribbon: 'linear-gradient(100deg, #fff0b8, #ffc85a 40%, #5fe3ff)',
     cta: 'linear-gradient(180deg, #fff0b8, #ffce62 52%, #f5a623)',
     ctaText: '#3a2504',
+    die: {
+      name: 'Золотой',
+      face: 'linear-gradient(150deg, #fff9e6 0%, #ffdf94 55%, #ffc94d 100%)',
+      pip: '#4a2e04',
+      edge: '#e8b23f',
+      radius: 50,
+      glow: 'rgba(255, 211, 107, 0.6)',
+    },
   },
 }
 
@@ -200,4 +266,35 @@ export const SPECIAL_COLORS = {
   practice: 'linear-gradient(145deg, #c8f7e1 0%, #7fe0b8 50%, #2aa877 100%)',
   problem: 'linear-gradient(145deg, #ffcfae 0%, #ff9a66 50%, #e56a3e 100%)',
   formula: 'linear-gradient(145deg, #fff3b8 0%, #ffda6b 50%, #e8b52d 100%)',
+}
+
+/** Форма кубика зависит от формата игры */
+const FORMAT_DIE_SHAPE: Record<GameFormat, { radius: number | null; clip?: string }> = {
+  quarter: { radius: null },  // скругление берётся из дизайна класса
+  year: { radius: 50 },       // круглый кубик — «весь год» целиком
+  topics: { radius: null },   // сквircle: дизайн класса + запас
+  custom: { radius: 18, clip: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)' },
+}
+
+/**
+ * Готовые CSS-свойства кубика: дизайн определяется классом (темой),
+ * форма — форматом игры (четверть / год / свои темы / своя монополия).
+ */
+export function dieStyle(themeId: ThemeId, format: GameFormat): CSSProperties {
+  const die = (THEMES[themeId] ?? THEMES.g7).die
+  const shape = FORMAT_DIE_SHAPE[format] ?? FORMAT_DIE_SHAPE.quarter
+  const radius = shape.radius ?? (format === 'topics' ? Math.min(34, die.radius + 8) : die.radius)
+  return {
+    '--die-face': die.face,
+    '--die-pip': die.pip,
+    '--die-edge': die.edge,
+    '--die-glow': die.glow,
+    '--die-radius': `${radius}%`,
+    ...(shape.clip ? { '--die-clip': shape.clip } : {}),
+  } as CSSProperties
+}
+
+/** Подпись дизайна кубика для подсказки в настройках */
+export function dieName(themeId: ThemeId): string {
+  return (THEMES[themeId] ?? THEMES.g7).die.name
 }

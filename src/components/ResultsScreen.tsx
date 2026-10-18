@@ -73,7 +73,8 @@ export function ResultsScreen({
           const tieCount = samePlaceCount(place);
           return <article key={team.id} className={`podium-card place-${place} ${place === 1 ? 'is-winner' : ''}`} style={{
             '--team-from': palette.from,
-            '--team-to': palette.to
+            '--team-to': palette.to,
+            '--podium-i': index
           } as CSSProperties}>
                 <div className="podium-place">
                   {place === 1 ? <Trophy size={20} /> : place === 2 ? <Medal size={18} /> : <Flag size={16} />}

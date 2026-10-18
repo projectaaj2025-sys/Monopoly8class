@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
-import { Atom, CircleHelp, Dices, FlaskConical, Library, ShieldCheck, Sparkles, Trophy, Users, Volume2, VolumeX, Wand2, Zap } from 'lucide-react';
-import type { CustomBoard, GameConfig, TeamTemplate } from './types';
+import { Atom, CircleHelp, Dices, FlaskConical, History, Library, ShieldCheck, Sparkles, Trophy, Users, Volume2, VolumeX, Wand2, Zap } from 'lucide-react';
+import type { CustomBoard, GameConfig, GameSaveState, TeamTemplate } from './types';
 import { SetupScreen } from './components/SetupScreen';
 import { GameScreen } from './components/GameScreen';
 import { LibraryScreen } from './components/LibraryScreen';
 import { BuilderScreen } from './components/BuilderScreen';
+import { HistoryScreen } from './components/HistoryScreen';
 import { Modal } from './components/ui';
-import { blankBoard, downloadFile, ensureSeed, loadCustomBoards, saveCustomBoards } from './data/storage';
+import { blankBoard, clearGameSave, downloadFile, ensureSeed, loadCustomBoards, loadGameSave, saveCustomBoards } from './data/storage';
 import { buildGameConfig, DEFAULT_TEAM_TEMPLATES, uid } from './game/engine';
 import { isSoundEnabled, setSoundEnabled, sfx } from './lib/sound';
 import { applyTheme, getInitialTheme, type ThemeMode } from './lib/theme';
 import { ThemeToggle } from './components/ThemeToggle';
 import { LangSwitch } from './components/LangSwitch';
 import { t, useLocale } from './i18n';
-type Screen = 'setup' | 'game' | 'library' | 'builder';
+type Screen = 'setup' | 'game' | 'library' | 'builder' | 'history';
 const HELP_STEPS = [{
   icon: <Dices size={20} />,
   title: 'Соберите поле',
@@ -38,6 +39,8 @@ export default function App() {
   const [config, setConfig] = useState<GameConfig | null>(null);
   const [setupReturnScreen, setSetupReturnScreen] = useState<Screen>('setup');
   const [gameKey, setGameKey] = useState(0);
+  /** Сохранённая незавершённая игра — предлагаем продолжить */
+  const [resumeSave, setResumeSave] = useState<GameSaveState | null>(() => loadGameSave());
   const [editingBoard, setEditingBoard] = useState<CustomBoard | null>(null);
   const [editingIsNew, setEditingIsNew] = useState(false);
   const [soundOn, setSoundOn] = useState<boolean>(() => isSoundEnabled());
@@ -77,11 +80,33 @@ export default function App() {
   const startGame = (nextConfig: GameConfig) => {
     setConfig(nextConfig);
     setGameKey(prev => prev + 1);
+    /* Обычная игра всегда возвращает в настройки — даже если перед ней
+       играли с авторской монополией из библиотеки. */
+    if (nextConfig.source === 'curriculum') setSetupReturnScreen('setup');
+    /* Новая игра заменяет собой незавершённую */
+    clearGameSave();
+    setResumeSave(null);
     setScreen('game');
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
+  };
+  const resumeGame = (save: GameSaveState) => {
+    setConfig(save.config);
+    setGameKey(prev => prev + 1);
+    setResumeSave(save);
+    setSetupReturnScreen('setup');
+    setScreen('game');
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+  const discardSave = () => {
+    clearGameSave();
+    setResumeSave(null);
+    showToast(t("Сохранённая игра удалена"));
   };
   const playCustom = (board: CustomBoard) => {
     setSetupReturnScreen('library');
@@ -93,7 +118,8 @@ export default function App() {
       subtitle: `${board.questions.length} ${t("авторских заданий")} · ${t("своя монополия")}`,
       rounds: 8,
       teamTemplates: templates,
-      customBoard: board
+      customBoard: board,
+      format: 'custom'
     });
     customConfig.title = board.isSample ? t(board.name) : board.name || t("Своя монополия");
     startGame(customConfig);
@@ -186,9 +212,21 @@ export default function App() {
     };
     reader.readAsText(file);
   };
+  /* «В меню» — туда, откуда пришли (настройки или библиотека). */
   const closeGame = () => {
     setConfig(null);
+    setResumeSave(loadGameSave());
     setScreen(setupReturnScreen);
+    window.scrollTo({
+      top: 0
+    });
+  };
+  /* «Изменить настройки» — всегда на экран настройки игры,
+     а не в библиотеку и не обратно в игру. */
+  const openSettings = () => {
+    setConfig(null);
+    setResumeSave(loadGameSave());
+    setScreen('setup');
     window.scrollTo({
       top: 0
     });
@@ -216,6 +254,9 @@ export default function App() {
               <button type="button" className={screen === 'library' ? 'is-active' : ''} onClick={() => setScreen('library')}>
                 <Library size={16} />{" "}{t("Мои монополии")}<span className="nav-count">{boards.length}</span>
               </button>
+              <button type="button" className={screen === 'history' ? 'is-active' : ''} onClick={() => setScreen('history')}>
+                <History size={16} />{" "}{t("История")}
+              </button>
             </nav>
 
             <div className="topbar-right">
@@ -230,14 +271,16 @@ export default function App() {
           </div>
         </header>}
 
-      {screen === 'setup' && <SetupScreen boardsCount={boards.length} soundOn={soundOn} onToggleSound={toggleSound} onStart={startGame} onOpenLibrary={() => setScreen('library')} onShowRules={() => setHelpOpen(true)} />}
+      {screen === 'setup' && <SetupScreen boardsCount={boards.length} soundOn={soundOn} onToggleSound={toggleSound} onStart={startGame} onOpenLibrary={() => setScreen('library')} onShowRules={() => setHelpOpen(true)} resumeSave={resumeSave} onResume={resumeGame} onDiscardSave={discardSave} />}
 
-      {screen === 'game' && config && <GameScreen key={gameKey} config={config} soundOn={soundOn} onToggleSound={toggleSound} theme={theme} onToggleTheme={toggleTheme} onExit={closeGame} onSettings={closeGame} onRestart={startGame} onShowRules={() => setHelpOpen(true)} />}
+      {screen === 'game' && config && <GameScreen key={gameKey} config={config} resume={resumeSave} soundOn={soundOn} onToggleSound={toggleSound} theme={theme} onToggleTheme={toggleTheme} onExit={closeGame} onSettings={openSettings} onRestart={startGame} onShowRules={() => setHelpOpen(true)} />}
 
       {screen === 'library' && <LibraryScreen boards={boards} onCreate={openCreate} onEdit={openEdit} onPlay={playCustom} onDuplicate={duplicateBoard} onDelete={deleteBoard} onBack={() => setScreen('setup')} onShowRules={() => setHelpOpen(true)} onExportAll={() => {
       downloadFile('fizika-poli-monopolii.json', JSON.stringify(boards, null, 2), 'application/json');
       showToast(t("Резервная копия скачана"));
     }} onImport={importBoards} />}
+
+      {screen === 'history' && <HistoryScreen onBack={() => setScreen('setup')} onShowRules={() => setHelpOpen(true)} />}
 
       {screen === 'builder' && editingBoard && <BuilderScreen board={editingBoard} isNew={editingIsNew} onBack={() => {
       setEditingBoard(null);
