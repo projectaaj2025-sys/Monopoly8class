@@ -5,6 +5,10 @@ dist
 *.log
 *.tsbuildinfo
 
+# Сборки скриптов-проверок (headless-тесты через esbuild + jsdom)
+scripts/.checks/
+scripts/.*.mjs
+
 # Учебники предоставлены автором проекта для сверки содержания.
 # Это крупные PDF и защищённые авторским правом материалы — в Git не кладём.
 docs/textbooks/*.pdf

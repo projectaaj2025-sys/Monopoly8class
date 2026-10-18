@@ -359,6 +359,7 @@
   position: relative;
   padding: 8px;
   border-radius: 32px;
+  overflow: hidden;
   background:
     linear-gradient(150deg, var(--frame-a) 0%, var(--frame-b) 28%, #081020 52%, var(--frame-b) 78%, var(--frame-a) 100%);
   box-shadow:
@@ -368,6 +369,8 @@
 }
 
 .board-frame-inner {
+  position: relative;
+  z-index: 1;
   padding: 7px;
   border-radius: 26px;
   background: var(--board-bg);
@@ -383,7 +386,8 @@
   grid-template-rows: repeat(7, minmax(0, 1fr));
   gap: 5px;
   padding: 7px;
-  aspect-ratio: 9 / 5.9;
+  /* Клетки монополии — строго квадратные */
+  aspect-ratio: 9 / 7;
   border-radius: 20px;
   background: var(--board-bg);
   overflow: hidden;
@@ -395,6 +399,21 @@
   inset: 0;
   z-index: 0;
   overflow: hidden;
+}
+
+/* Декоративный узор рамки — лучи, волны, сетка, молекулы, орбиты, звёзды */
+.board-pattern-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* В центральной панели узор просвечивает сквозь полупрозрачный фон */
+.board-pattern-svg--inner {
+  opacity: 0.5;
 }
 
 .board-art img {
@@ -439,7 +458,18 @@
     inset 0 1px 0 rgba(var(--ink-rgb), 0.7),
     inset 0 -6px 12px rgba(20, 40, 70, 0.12),
     0 3px 8px rgba(0, 0, 0, 0.22);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+@media (hover: hover) {
+  .tile:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.04);
+    box-shadow:
+      inset 0 1px 0 rgba(var(--ink-rgb), 0.7),
+      inset 0 -6px 12px rgba(20, 40, 70, 0.12),
+      0 8px 16px -4px rgba(0, 0, 0, 0.35);
+  }
 }
 
 .tile::after {
@@ -470,6 +500,8 @@
   z-index: 3;
   background: var(--owner-color);
   box-shadow: 0 0 8px var(--owner-color);
+  transform-origin: left;
+  animation: ownerBarIn 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 
 .tile-top {
@@ -573,9 +605,40 @@
   color: #10203c;
 }
 
+.tile--start .tile-icon {
+  animation: startGlow 2.8s ease-in-out infinite;
+}
+
+@keyframes startGlow {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px rgba(255, 194, 71, 0.9));
+  }
+}
+
 .tile--rocket .tile-title,
 .tile--bonus .tile-title {
   color: #3a1d12;
+}
+
+/* Ракета мягко парит, бонусная клетка переливается */
+.tile--rocket .tile-icon {
+  animation: rocketFloat 2.4s ease-in-out infinite;
+}
+
+.tile--bonus::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: shimmer 3.2s ease-in-out infinite;
 }
 
 .tokens {
@@ -599,6 +662,7 @@
   font-size: 8px;
   line-height: 1;
   margin-left: -4px;
+  animation: tokenHop 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.4);
 }
 
 .token-dot:first-child {
@@ -716,6 +780,7 @@
   background: rgba(5, 10, 20, 0.42);
   border: 1px solid rgba(var(--ink-rgb), 0.09);
   box-shadow: inset 0 1px 0 rgba(var(--ink-rgb), 0.05);
+  animation: turnPop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.3);
 }
 
 .turn-label {
@@ -752,6 +817,7 @@
   margin-top: 8px;
 }
 
+/* Кубик: дизайн задаётся классом (темой), форма — форматом игры */
 .die {
   width: clamp(48px, 4.8vw, 66px);
   aspect-ratio: 1;
@@ -760,18 +826,29 @@
   grid-template-rows: repeat(3, 1fr);
   gap: 3px;
   padding: 10px;
-  border-radius: 13px;
-  background: linear-gradient(150deg, #ffffff 0%, #e8eefb 60%, #cdd8ea 100%);
-  border: 1px solid rgba(var(--ink-rgb), 0.9);
+  border-radius: var(--die-radius, 22%);
+  background: var(--die-face, linear-gradient(150deg, #ffffff 0%, #e8eefb 60%, #cdd8ea 100%));
+  border: 1px solid var(--die-edge, rgba(var(--ink-rgb), 0.9));
+  /* Формат «своя монополия» задаёт гранёный контур */
+  clip-path: var(--die-clip, none);
   box-shadow:
     0 10px 22px -8px rgba(0, 0, 0, 0.7),
-    inset 0 2px 3px rgba(var(--ink-rgb), 0.95),
-    inset 0 -6px 10px rgba(50, 70, 110, 0.15);
+    inset 0 2px 3px rgba(var(--ink-rgb), 0.55),
+    inset 0 -6px 10px rgba(50, 70, 110, 0.12);
   transform: rotate(-4deg);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .die.is-rolling {
-  animation: diceRoll 0.5s ease-in-out infinite;
+  animation: diceTumble 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+  box-shadow:
+    0 16px 30px -10px var(--die-glow, rgba(255, 194, 71, 0.55)),
+    0 10px 22px -8px rgba(0, 0, 0, 0.7),
+    inset 0 2px 3px rgba(var(--ink-rgb), 0.55);
+}
+
+.die.is-settling {
+  animation: dieSettle 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.4);
 }
 
 .pip {
@@ -780,7 +857,7 @@
 }
 
 .pip.is-on {
-  background: radial-gradient(circle at 35% 30%, #3b4f7a, #101a30 70%);
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--die-pip, #3b4f7a) 55%, #ffffff), var(--die-pip, #101a30) 70%);
   box-shadow: inset 0 1px 2px rgba(var(--ink-rgb), 0.35), 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
@@ -1220,21 +1297,86 @@
   color: #d8e2f2;
 }
 
-@keyframes diceRoll {
+@keyframes diceTumble {
   0% {
-    transform: rotate(-4deg) translateY(0);
+    transform: rotate(-4deg) rotateX(0deg) translateY(0) scale(1);
   }
   25% {
-    transform: rotate(8deg) translateY(-5px);
+    transform: rotate(14deg) rotateX(90deg) translateY(-6px) scale(1.04);
   }
   50% {
-    transform: rotate(-10deg) translateY(1px);
+    transform: rotate(-16deg) rotateX(180deg) translateY(1px) scale(0.97);
   }
   75% {
-    transform: rotate(6deg) translateY(-3px);
+    transform: rotate(10deg) rotateX(270deg) translateY(-4px) scale(1.03);
   }
   100% {
-    transform: rotate(-4deg) translateY(0);
+    transform: rotate(-4deg) rotateX(360deg) translateY(0) scale(1);
+  }
+}
+
+@keyframes dieSettle {
+  0% {
+    transform: rotate(-4deg) scale(1.25);
+  }
+  60% {
+    transform: rotate(-7deg) scale(0.94);
+  }
+  100% {
+    transform: rotate(-4deg) scale(1);
+  }
+}
+
+@keyframes tokenHop {
+  0% {
+    transform: translateY(-6px) scale(1.15);
+  }
+  60% {
+    transform: translateY(1px) scale(0.95);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ownerBarIn {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes rocketFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  55% {
+    transform: translateX(-120%);
+  }
+  85%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes turnPop {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 

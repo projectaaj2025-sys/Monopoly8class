@@ -72,6 +72,15 @@
     linear-gradient(180deg, rgba(20, 34, 58, 0.82), rgba(10, 18, 33, 0.94));
   box-shadow: 0 30px 60px -46px rgba(0, 0, 0, 0.95);
   overflow: hidden;
+  animation: podiumRise 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.25) backwards;
+  animation-delay: calc(var(--podium-i, 0) * 120ms);
+}
+
+@keyframes podiumRise {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.94);
+  }
 }
 
 .podium-card::before {

@@ -535,7 +535,7 @@
   grid-template-rows: repeat(7, 1fr);
   gap: 2px;
   padding: 5px;
-  aspect-ratio: 9 / 5.65;
+  aspect-ratio: 9 / 7;
   border-radius: 11px;
   background: rgba(3, 8, 17, 0.62);
   border: 1px solid rgba(var(--ink-rgb), 0.12);

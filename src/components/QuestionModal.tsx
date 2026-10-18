@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { ArrowRight, Check, Clock3, HelpCircle, Languages, Lightbulb, Loader2, Sparkles, X } from 'lucide-react';
 import type { ActiveQuestion, Team } from '../types';
 import { sfx } from '../lib/sound';
@@ -63,6 +63,7 @@ export function QuestionModal({
     setSeconds(60);
     setTranslated(null);
     setTranslateError(false);
+    sfx.pop();
     if (timerRef.current) window.clearInterval(timerRef.current);
     timerRef.current = window.setInterval(() => {
       setSeconds(prev => {
@@ -70,7 +71,8 @@ export function QuestionModal({
           window.clearInterval(timerRef.current as number);
           return 0;
         }
-        if (prev <= 11) sfx.tick();
+        if (prev <= 5) sfx.warn();
+        else if (prev <= 11) sfx.tick();
         return prev - 1;
       });
     }, 1000);
@@ -240,7 +242,7 @@ export function QuestionModal({
           const letter = String.fromCharCode(65 + index);
           const isRight = revealed && index === correct;
           const isWrong = revealed && index === selected && index !== correct;
-          return <button key={`${option}-${index}`} type="button" className={`option ${isRight ? 'is-right' : ''} ${isWrong ? 'is-wrong' : ''} ${selected === index ? 'is-selected' : ''}`} onClick={() => choose(index)} disabled={revealed}>
+          return <button key={`${option}-${index}`} type="button" className={`option option--animate ${isRight ? 'is-right' : ''} ${isWrong ? 'is-wrong' : ''} ${selected === index ? 'is-selected' : ''}`} style={{ '--option-i': index } as CSSProperties} onClick={() => choose(index)} disabled={revealed}>
                   <span className="option-letter">{isRight ? <Check size={15} /> : isWrong ? <X size={15} /> : letter}</span>
                   <span className="option-text">{translated?.options[index] ?? option}</span>
                 </button>;

@@ -5,6 +5,7 @@ import type {
   CellKind,
   CustomBoard,
   GameConfig,
+  GameFormat,
   GradeId,
   Question,
   Team,
@@ -468,6 +469,7 @@ export function buildGameConfig(params: {
   rounds: number
   teamTemplates: TeamTemplate[]
   customBoard?: CustomBoard
+  format?: GameFormat
 }): GameConfig {
   const { source, topics, themeId, subtitle, rounds, teamTemplates, customBoard } = params
   const title =
@@ -485,6 +487,7 @@ export function buildGameConfig(params: {
     maxMoves: rounds * Math.max(1, teamTemplates.length),
     teamTemplates,
     rounds,
+    format: params.format ?? (source === 'custom' ? 'custom' : 'quarter'),
   }
 }
 

@@ -141,7 +141,7 @@ export function LibraryScreen({
               return <span key={cell.index} style={{
                 gridRow: pos.gridRow,
                 gridColumn: pos.gridColumn,
-                background: tileBackground(cell)
+                background: tileBackground(cell, theme)
               }} />;
             })}
                   <div className="board-card-mini-center">

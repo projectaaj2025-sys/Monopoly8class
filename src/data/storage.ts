@@ -1,8 +1,11 @@
-import type { CustomBoard, CustomQuestion, ThemeId } from '../types'
+import type { CustomBoard, CustomQuestion, GameRecord, GameSaveState, GameSaveSummary, ThemeId } from '../types'
 import { uid } from '../game/engine'
 
 const BOARDS_KEY = 'fizika-poli.custom-boards.v1'
 const SEED_KEY = 'fizika-poli.seeded.v1'
+const SAVE_KEY = 'fizika-poli.game-save.v1'
+const HISTORY_KEY = 'fizika-poli.history.v1'
+const HISTORY_LIMIT = 30
 
 const safeParse = <T>(raw: string | null, fallback: T): T => {
   if (!raw) return fallback
@@ -322,4 +325,82 @@ export function downloadFile(name: string, content: string, type = 'text/csv;cha
   link.click()
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
+}
+
+/* ── Незавершённая игра ─────────────────────────────── */
+
+export function loadGameSave(): GameSaveState | null {
+  if (typeof window === 'undefined') return null
+  const raw = safeParse<GameSaveState | null>(window.localStorage.getItem(SAVE_KEY), null)
+  if (!raw || !raw.config || !Array.isArray(raw.teams)) return null
+  return raw
+}
+
+export function saveGameSave(state: GameSaveState): void {
+  try {
+    window.localStorage.setItem(SAVE_KEY, JSON.stringify(state))
+  } catch {
+    /* хранилище переполнено или недоступно */
+  }
+}
+
+export function clearGameSave(): void {
+  try {
+    window.localStorage.removeItem(SAVE_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
+export function gameSaveSummary(save: GameSaveState): GameSaveSummary {
+  return {
+    title: save.config.title,
+    subtitle: save.config.subtitle,
+    themeId: save.config.themeId,
+    savedAt: save.savedAt,
+    turn: save.turn,
+    maxMoves: save.config.maxMoves,
+    teams: save.teams.map((team) => ({
+      name: team.name,
+      emoji: team.emoji,
+      color: team.color,
+      score: team.score,
+      position: team.position,
+    })),
+  }
+}
+
+/* ── История прохождений ────────────────────────────── */
+
+export function loadHistory(): GameRecord[] {
+  if (typeof window === 'undefined') return []
+  const records = safeParse<GameRecord[]>(window.localStorage.getItem(HISTORY_KEY), [])
+  if (!Array.isArray(records)) return []
+  return records.filter((item) => item && item.finishedAt && Array.isArray(item.teams))
+}
+
+export function addGameRecord(record: GameRecord): void {
+  try {
+    const next = [record, ...loadHistory()].slice(0, HISTORY_LIMIT)
+    window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next))
+  } catch {
+    /* ignore */
+  }
+}
+
+export function clearHistory(): void {
+  try {
+    window.localStorage.removeItem(HISTORY_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
+export function removeGameRecord(id: string): void {
+  try {
+    const next = loadHistory().filter((item) => item.id !== id)
+    window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next))
+  } catch {
+    /* ignore */
+  }
 }

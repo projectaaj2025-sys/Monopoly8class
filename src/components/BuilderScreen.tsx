@@ -386,7 +386,7 @@ export function BuilderScreen({
                 return <span key={cell.index} style={{
                   gridRow: pos.gridRow,
                   gridColumn: pos.gridColumn,
-                  background: tileBackground(cell)
+                  background: tileBackground(cell, theme)
                 }} />;
               })}
                 <div className="builder-mini-center">

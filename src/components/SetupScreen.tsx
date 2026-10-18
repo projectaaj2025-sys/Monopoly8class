@@ -1,10 +1,12 @@
 import { useMemo, useState, type CSSProperties } from 'react';
-import { ArrowRight, BookOpen, Check, CircleHelp, Dices, FlaskConical, GraduationCap, Layers, Library, ListChecks, RotateCcw, Search, Sparkles, Trophy, Users, Wand2, X } from 'lucide-react';
+import { ArrowRight, BookOpen, Check, CircleHelp, Dices, FlaskConical, GraduationCap, Layers, Library, ListChecks, Play, RotateCcw, Search, Sparkles, Trophy, Users, Wand2, X } from 'lucide-react';
 import type { GameConfig, GradeId, TeamTemplate, Topic } from '../types';
 import { GRADE_LIST, GRADES, QUARTER_LABELS, allTopicsOfGrades, topicsOfGrade, topicsOfQuarter } from '../data/curriculum';
-import { DOMAIN_META, TEAM_COLORS, THEMES, THEME_ICON } from '../data/themes';
+import { DOMAIN_META, TEAM_COLORS, THEMES, THEME_ICON, dieStyle, dieName } from '../data/themes';
 import { BASE_QUESTIONS } from '../data/questions';
 import { DEFAULT_ROUNDS, TEAM_PALETTE, buildBoard, buildGameConfig, countQuestions, formatNumber, pluralize } from '../game/engine';
+import { gameSaveSummary } from '../data/storage';
+import type { GameSaveState } from '../types';
 import { sfx } from '../lib/sound';
 import { gridPosition, tileBackground } from './Board';
 import { Stepper } from './ui';
@@ -28,6 +30,15 @@ const pluralTopics = (n: number): string => `${n} ${pluralRu(n, 'тема', 'т�
 const pluralTasks = (n: number): string => `${n} ${pluralize(n, 'задание', 'задания', 'заданий')}`;
 const pluralClasses = (n: number): string => `${n} ${pluralize(n, 'класс', 'класса', 'классов')}`;
 const pluralQuestions = (n: number): string => `${n} ${pluralize(n, 'вопрос', 'вопроса', 'вопросов')}`;
+/** Раскладка точек кубика для предпросмотра (значение 5) */
+const PIP_LAYOUT: Record<number, number[]> = {
+  1: [4],
+  2: [0, 8],
+  3: [0, 4, 8],
+  4: [0, 2, 6, 8],
+  5: [0, 2, 4, 6, 8],
+  6: [0, 2, 3, 5, 6, 8],
+};
 interface SetupScreenProps {
   boardsCount: number;
   soundOn: boolean;
@@ -35,6 +46,10 @@ interface SetupScreenProps {
   onStart: (config: GameConfig) => void;
   onOpenLibrary: () => void;
   onShowRules: () => void;
+  /** Сохранённая незавершённая игра — предложить продолжить */
+  resumeSave: GameSaveState | null;
+  onResume: (save: GameSaveState) => void;
+  onDiscardSave: () => void;
 }
 export function SetupScreen({
   boardsCount,
@@ -42,7 +57,10 @@ export function SetupScreen({
   onToggleSound,
   onStart,
   onOpenLibrary,
-  onShowRules
+  onShowRules,
+  resumeSave,
+  onResume,
+  onDiscardSave
 }: SetupScreenProps) {
   const [grades, setGrades] = useState<GradeId[]>([DEFAULT_GRADE]);
   const [mode, setMode] = useState<Mode>('quarter');
@@ -202,7 +220,8 @@ export function SetupScreen({
       themeId,
       subtitle,
       rounds,
-      teamTemplates: templates
+      teamTemplates: templates,
+      format: mode
     });
     config.title = title;
     onStart(config);
@@ -256,6 +275,47 @@ export function SetupScreen({
           </button>
         </div>
       </section>
+
+      {resumeSave && (() => {
+        const summary = gameSaveSummary(resumeSave);
+        const savedTheme = THEMES[summary.themeId] ?? THEMES.g7;
+        const savedAt = new Intl.DateTimeFormat('ru-RU', {
+          day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+        }).format(summary.savedAt);
+        return <section className="resume-banner panel" style={{
+          '--accent': savedTheme.accent,
+          '--accent-2': savedTheme.accent2
+        } as CSSProperties}>
+            <div className="resume-orb" aria-hidden>
+              <Icon name={THEME_ICON[summary.themeId] ?? 'Atom'} size={24} />
+            </div>
+            <div className="resume-main">
+              <div className="eyebrow">
+                <Sparkles size={13} />{" "}{t("Незавершённая игра")}
+              </div>
+              <h2>{localizeComposed(summary.title)}</h2>
+              <p className="resume-sub">
+                {localizeComposed(summary.subtitle)} · {t("сохранена")} {savedAt} · {t("ход")} {summary.turn + 1} {t("из")} {summary.maxMoves}
+              </p>
+              <div className="resume-teams">
+                {summary.teams.map(team => <span key={team.name} className="resume-team">
+                    <i style={{ background: `linear-gradient(150deg, ${TEAM_COLORS.find(color => color.id === team.color)?.from ?? '#6ea8ff'}, ${TEAM_COLORS.find(color => color.id === team.color)?.to ?? '#2f63e0'})` }}>{team.emoji}</i>
+                    <b>{team.name}</b>
+                    <small>{formatNumber(team.score)} {t("очков")}</small>
+                  </span>)}
+              </div>
+            </div>
+            <div className="resume-actions">
+              <button type="button" className="btn btn--primary btn--lg" onClick={() => onResume(resumeSave)}>
+                <Play size={17} />{" "}{t("Продолжить игру")}</button>
+              <button type="button" className="btn btn--ghost btn--lg" onClick={() => {
+            sfx.tap();
+            onDiscardSave();
+          }}>
+                {t("Отказаться")}</button>
+            </div>
+          </section>;
+      })()}
 
       <div className="setup-stage" id="setup">
         <section className="panel setup-main">
@@ -486,7 +546,7 @@ export function SetupScreen({
                 return <span key={cell.index} className="mini-tile" style={{
                   gridRow: pos.gridRow,
                   gridColumn: pos.gridColumn,
-                  background: tileBackground(cell)
+                  background: tileBackground(cell, theme)
                 }} />;
               })}
                 <div className="mini-center">
@@ -531,6 +591,16 @@ export function SetupScreen({
               </div>
 
               <div className="ticket-divider" />
+
+              <div className="ticket-die" title={t("Дизайн кубика меняется вместе с классом и форматом")}>
+                <span className={`die die--preview`} style={dieStyle(themeId, mode)} aria-hidden>
+                  {Array.from({ length: 9 }).map((_, index) => <i key={index} className={`pip ${PIP_LAYOUT[5].includes(index) ? 'is-on' : ''}`} />)}
+                </span>
+                <div>
+                  <b>{t("Кубик")}: {t(dieName(themeId))}</b>
+                  <small>{t("дизайн поля и кубика — по классу и формату")}</small>
+                </div>
+              </div>
 
               <div className="ticket-mode">
                 <span className={`mode-badge mode-badge--${mode}`}>

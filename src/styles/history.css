@@ -1,0 +1,261 @@
+/* ── История прохождений ─────────────────────────── */
+.history-page {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 22px 32px 40px;
+  min-height: 100vh;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.history-card {
+  overflow: hidden;
+  padding: 0;
+}
+
+.history-card-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 16px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.history-card-head:hover {
+  background: rgba(var(--ink-rgb), 0.04);
+}
+
+.history-orb {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  color: #241203;
+  box-shadow: inset 0 1px 0 rgba(var(--ink-rgb), 0.5);
+}
+
+.history-card-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-card-main b {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-card-main small {
+  color: var(--muted-2);
+  font-size: 10.5px;
+}
+
+.history-winner {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-winner svg {
+  flex: 0 0 auto;
+}
+
+.history-score {
+  flex: 0 0 auto;
+  text-align: right;
+  font-family: var(--font-head);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.history-score small {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-body);
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.history-card-head > svg {
+  flex: 0 0 auto;
+  color: var(--muted-2);
+}
+
+.history-card-body {
+  padding: 0 16px 15px;
+  border-top: 1px dashed var(--line);
+  animation: feedIn 0.22s ease;
+}
+
+.history-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 11px 0 10px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.history-teams {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.history-team {
+  display: grid;
+  grid-template-columns: 26px 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 11px;
+  border-radius: 11px;
+  border: 1px solid rgba(var(--ink-rgb), 0.07);
+  background: rgba(var(--ink-rgb), 0.025);
+}
+
+.history-team.is-winner {
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.history-place {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: rgba(var(--ink-rgb), 0.05);
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.history-team.is-winner .history-place {
+  color: #3a2504;
+  background: linear-gradient(180deg, #ffe4a1, #ffc247);
+  border-color: rgba(255, 226, 160, 0.55);
+}
+
+.history-team-token {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(var(--ink-rgb), 0.06);
+  border: 1px solid var(--line);
+  font-family: var(--font-emoji);
+  font-size: 17px;
+}
+
+.history-team-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-team-score {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.history-team-stats {
+  grid-column: 2 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--muted-2);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.history-team-stats i {
+  font-style: normal;
+}
+
+.history-team-stats .is-good {
+  color: #8decc3;
+}
+
+.history-team-stats .is-bad {
+  color: #ff9fae;
+}
+
+.history-team-stats .is-cap {
+  color: var(--gold);
+}
+
+.history-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.history-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 18px;
+  color: var(--muted-2);
+  font-size: 11.5px;
+}
+
+.history-foot b {
+  color: var(--gold);
+}
+
+@media (max-width: 860px) {
+  .history-page {
+    padding: 16px 16px 32px;
+  }
+
+  .history-winner {
+    display: none;
+  }
+
+  .history-team {
+    grid-template-columns: 22px 30px minmax(0, 1fr) auto;
+  }
+}

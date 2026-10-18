@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { ArrowLeft, BookOpen, Check, ChevronRight, CircleHelp, Dices, Flag, FlaskConical, Gift, Lightbulb, LogOut, Pause, Rocket, RotateCcw, ShieldQuestion, Sigma, Sparkles, Trophy, Users, Volume2, VolumeX, X } from 'lucide-react';
-import type { ActiveQuestion, BonusEvent, GameConfig, GamePhase, LogEntry, Team } from '../types';
-import { DOMAIN_META, TEAM_COLORS, THEMES } from '../data/themes';
-import { drawQuestion, formatNumber, makeTeams, pickBonus, pluralize, rollDie, RING_SIZE, teamVerb } from '../game/engine';
+import type { ActiveQuestion, BonusEvent, GameConfig, GamePhase, GameRecord, GameSaveState, LogEntry, Team } from '../types';
+import { DOMAIN_META, TEAM_COLORS, THEMES, dieStyle } from '../data/themes';
+import { drawQuestion, formatNumber, makeTeams, pickBonus, pluralize, rollDie, RING_SIZE, teamVerb, uid } from '../game/engine';
+import { addGameRecord, clearGameSave, saveGameSave } from '../data/storage';
 import { sfx } from '../lib/sound';
 import { Board } from './Board';
 import { QuestionModal } from './QuestionModal';
@@ -15,6 +16,8 @@ import type { ThemeMode } from '../lib/theme';
 import { localizeComposed, t } from '../i18n'
 interface GameScreenProps {
   config: GameConfig;
+  /** Восстановление незавершённой игры */
+  resume?: GameSaveState | null;
   soundOn: boolean;
   onToggleSound: () => void;
   theme: ThemeMode;
@@ -44,6 +47,7 @@ const initialLogs = (config: GameConfig): LogEntry[] => [{
 }];
 export function GameScreen({
   config,
+  resume = null,
   soundOn,
   onToggleSound,
   theme: themeMode,
@@ -54,18 +58,18 @@ export function GameScreen({
   onShowRules
 }: GameScreenProps) {
   const theme = THEMES[config.themeId] ?? THEMES.g7;
-  const [teams, setTeams] = useState<Team[]>(() => makeTeams(config.teamTemplates));
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [phase, setPhase] = useState<GamePhase>('idle');
-  const [die, setDie] = useState(1);
-  const [rollNonce, setRollNonce] = useState(0);
-  const [owners, setOwners] = useState<Record<number, string>>({});
-  const [activeQuestion, setActiveQuestion] = useState<ActiveQuestion | null>(null);
+  const [teams, setTeams] = useState<Team[]>(() => resume?.teams ?? makeTeams(config.teamTemplates));
+  const [activeIndex, setActiveIndex] = useState(resume?.activeIndex ?? 0);
+  const [phase, setPhase] = useState<GamePhase>(resume?.phase === 'question' || resume?.phase === 'event' ? resume.phase : 'idle');
+  const [die, setDie] = useState(resume?.die ?? 1);
+  const [rollNonce, setRollNonce] = useState(resume?.rollNonce ?? 0);
+  const [owners, setOwners] = useState<Record<number, string>>(resume?.owners ?? {});
+  const [activeQuestion, setActiveQuestion] = useState<ActiveQuestion | null>(resume?.activeQuestion ?? null);
   const [pendingEvent, setPendingEvent] = useState<(BonusEvent & {
     eyebrow?: string;
-  }) | null>(null);
-  const [logs, setLogs] = useState<LogEntry[]>(() => initialLogs(config));
-  const [turn, setTurn] = useState(0);
+  }) | null>(resume?.pendingEvent ?? null);
+  const [logs, setLogs] = useState<LogEntry[]>(resume?.logs ?? initialLogs(config));
+  const [turn, setTurn] = useState(resume?.turn ?? 0);
   const [toast, setToast] = useState<{
     id: number;
     text: string;
@@ -73,11 +77,13 @@ export function GameScreen({
   } | null>(null);
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [confirmRestart, setConfirmRestart] = useState(false);
-  const usedRef = useRef<Set<string>>(new Set());
-  const turnRef = useRef(0);
+  const usedRef = useRef<Set<string>>(new Set(resume?.usedIds ?? []));
+  const turnRef = useRef(resume?.turn ?? 0);
   const logIdRef = useRef(3);
   const timersRef = useRef<number[]>([]);
   const toastTimerRef = useRef<number | null>(null);
+  /** Игра завершена — отложенные ходы больше не должны оживлять экран */
+  const finishedRef = useRef(false);
   const activeTeam = teams[activeIndex];
   const teamIs = (plural: string, singular: string) => teamVerb(activeTeam?.name, plural, singular);
   const contentCells = useMemo(() => config.board.filter(cell => isContentCell(cell.kind)), [config.board]);
@@ -93,6 +99,57 @@ export function GameScreen({
     timersRef.current.forEach(id => window.clearTimeout(id));
     if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
   }, []);
+
+  /* Автосохранение: незавершённую игру можно вернуть позже */
+  const saveTimerRef = useRef<number | null>(null);
+  const latestRef = useRef({ teams, activeIndex, turn, owners, logs, die, rollNonce, phase, activeQuestion, pendingEvent });
+  latestRef.current = { teams, activeIndex, turn, owners, logs, die, rollNonce, phase, activeQuestion, pendingEvent };
+  useEffect(() => {
+    if (phase === 'finished' || phase === 'moving') return;
+    const state: GameSaveState = {
+      config,
+      teams,
+      activeIndex,
+      turn,
+      owners,
+      logs,
+      die,
+      rollNonce,
+      phase: phase === 'question' || phase === 'event' ? phase : 'idle',
+      activeQuestion,
+      pendingEvent,
+      usedIds: [...usedRef.current],
+      savedAt: Date.now(),
+    };
+    saveGameSave(state);
+    return () => {
+      if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
+    };
+  }, [config, teams, activeIndex, turn, owners, logs, die, rollNonce, phase, activeQuestion, pendingEvent]);
+  /* Закрытие вкладки — дозаписать последнее состояние */
+  useEffect(() => {
+    const flush = () => {
+      const s = latestRef.current;
+      if (s.phase === 'finished' || s.phase === 'moving') return;
+      saveGameSave({
+        config,
+        teams: s.teams,
+        activeIndex: s.activeIndex,
+        turn: s.turn,
+        owners: s.owners,
+        logs: s.logs,
+        die: s.die,
+        rollNonce: s.rollNonce,
+        phase: s.phase === 'question' || s.phase === 'event' ? s.phase : 'idle',
+        activeQuestion: s.activeQuestion,
+        pendingEvent: s.pendingEvent,
+        usedIds: [...usedRef.current],
+        savedAt: Date.now(),
+      });
+    };
+    window.addEventListener('beforeunload', flush);
+    return () => window.removeEventListener('beforeunload', flush);
+  }, [config]);
   const pushLog = (text: string, tone: LogEntry['tone'] = 'neutral') => {
     logIdRef.current += 1;
     const entry: LogEntry = {
@@ -112,10 +169,35 @@ export function GameScreen({
     toastTimerRef.current = window.setTimeout(() => setToast(null), 2800);
   };
   const finishGame = () => {
+    /* Снимаем все отложенные ходы — иначе таймер последнего броска
+       может вернуть экран из итогов обратно в игру. */
+    timersRef.current.forEach(id => window.clearTimeout(id));
+    timersRef.current = [];
+    finishedRef.current = true;
     setPhase('finished');
     setActiveQuestion(null);
     setPendingEvent(null);
     setConfirmEnd(false);
+    /* Игра завершена — сохранение больше не нужно, зато история пригодится */
+    clearGameSave();
+    const sorted = [...teams].sort((a, b) => b.score - a.score);
+    const best = sorted[0]?.score ?? 0;
+    addGameRecord({
+      id: uid('rec'),
+      finishedAt: Date.now(),
+      title: config.title,
+      subtitle: config.subtitle,
+      themeId: config.themeId,
+      format: config.format,
+      source: config.source,
+      winner: sorted.filter((team) => team.score === best && best > 0).map((team) => team.name),
+      turns: turnRef.current,
+      captured,
+      totalCells: contentCells.length,
+      teams: sorted.map(({ name, emoji, color, score, correct, wrong, captures }) => ({
+        name, emoji, color, score, correct, wrong, captures,
+      })),
+    } satisfies GameRecord);
     sfx.win();
   };
   const advanceTurn = (extraRoll = false) => {
@@ -126,6 +208,7 @@ export function GameScreen({
       pushLog(`${activeTeam?.name ?? t("Команда")} ${teamIs('бросают', 'бросает')} ${t("кубик ещё раз")}`, 'good');
       return;
     }
+    sfx.turn();
     const next = turnRef.current + 1;
     turnRef.current = next;
     setTurn(next);
@@ -135,6 +218,7 @@ export function GameScreen({
     }
   };
   const land = (position: number) => {
+    if (finishedRef.current) return;
     const cell = config.board.find(item => item.index === position);
     if (!cell) {
       advanceTurn(false);
@@ -167,7 +251,7 @@ export function GameScreen({
         extraRoll: true
       });
       setPhase('event');
-      sfx.bonus();
+      sfx.rocket();
       pushLog(`${activeTeam?.name ?? t("Команда")} ${teamIs('запустили', 'запустила')} ${t("ракету")}`, 'good');
       return;
     }
@@ -193,7 +277,7 @@ export function GameScreen({
     sfx.open();
   };
   const startRoll = () => {
-    if (phase !== 'idle' || !activeTeam) return;
+    if (phase !== 'idle' || !activeTeam || finishedRef.current) return;
     const value = rollDie();
     setDie(value);
     setRollNonce(prev => prev + 1);
@@ -203,6 +287,7 @@ export function GameScreen({
     pushLog(`${activeTeam.name} ${teamIs('бросают', 'бросает')} ${t("кубик")}: ${value}`, 'neutral');
     for (let step = 1; step <= value; step += 1) {
       schedule(() => {
+        if (finishedRef.current) return;
         const nextPosition = (start + step) % RING_SIZE;
         setTeams(prev => prev.map((team, index) => index === activeIndex ? {
           ...team,
@@ -212,13 +297,14 @@ export function GameScreen({
         sfx.step();
         if (nextPosition === 0) {
           pushLog(`${activeTeam.name} ${teamIs('прошли', 'прошла')} ${t("круг")}: +100 ${t("очков")}`, 'good');
+          sfx.round();
         }
       }, step * 140);
     }
     schedule(() => land((start + value) % RING_SIZE), value * 140 + 220);
   };
   const claimEvent = () => {
-    if (!pendingEvent) return;
+    if (!pendingEvent || finishedRef.current) return;
     if (pendingEvent.points) {
       setTeams(prev => prev.map((team, index) => index === activeIndex ? {
         ...team,
@@ -236,7 +322,7 @@ export function GameScreen({
     timedOut?: boolean;
     override?: boolean;
   }) => {
-    if (!activeQuestion) return;
+    if (!activeQuestion || finishedRef.current) return;
     const cell = activeQuestion.cell;
     const team = teams[activeIndex];
     const previousOwnerId = owners[cell.index];
@@ -257,6 +343,7 @@ export function GameScreen({
       } : item));
       pushLog(`${team.name}: ${meta.override ? t("ответ засчитан учителем") : t("верный ответ")} · +${earned}${recapture ? t(" (перехват клетки)") : ''}`, 'good');
       showToast(recapture ? `${t("Перехват клетки!")} +${earned}` : `${t("Верно!")} +${earned} ${t("очков")}`, 'good');
+      if (recapture) sfx.capture();
     } else {
       setTeams(prev => prev.map((item, index) => index === activeIndex ? {
         ...item,
@@ -273,14 +360,16 @@ export function GameScreen({
     advanceTurn(false);
   };
   const skipQuestion = () => {
-    if (!activeQuestion) return;
+    if (!activeQuestion || finishedRef.current) return;
     pushLog(`${activeTeam?.name ?? t("Команда")} ${t("пропустила вопрос")}`, 'neutral');
+    sfx.skip();
     setActiveQuestion(null);
     advanceTurn(false);
   };
   const resetGame = () => {
     timersRef.current.forEach(id => window.clearTimeout(id));
     timersRef.current = [];
+    finishedRef.current = false;
     usedRef.current = new Set();
     turnRef.current = 0;
     logIdRef.current = 3;
@@ -413,13 +502,20 @@ export function GameScreen({
               <span>{t("Панель учителя")}</span>
             </div>
             <button type="button" className="teacher-btn" onClick={() => {
+            sfx.tap();
             pushLog(`${activeTeam?.name ?? t("Команда")}: ${t("ход пропущен")}`, 'neutral');
             advanceTurn(false);
           }} disabled={phase !== 'idle'}>
               <Pause size={15} />{" "}{t("Пропустить ход")}</button>
-            <button type="button" className="teacher-btn" onClick={() => setConfirmRestart(true)}>
+            <button type="button" className="teacher-btn" onClick={() => {
+            sfx.tap();
+            setConfirmRestart(true);
+          }}>
               <RotateCcw size={15} />{" "}{t("Начать заново")}</button>
-            <button type="button" className="teacher-btn teacher-btn--danger" onClick={() => setConfirmEnd(true)}>
+            <button type="button" className="teacher-btn teacher-btn--danger" onClick={() => {
+            sfx.tap();
+            setConfirmEnd(true);
+          }}>
               <Flag size={15} />{" "}{t("Завершить игру")}</button>
           </div>
         </aside>
@@ -431,7 +527,7 @@ export function GameScreen({
                 <h2 className="center-title">{localizeComposed(config.title)}</h2>
                 <div className="center-ribbon">{localizeComposed(config.subtitle)}</div>
 
-                <div className="turn-box">
+                <div className="turn-box" key={activeTeam?.id ?? 'none'}>
                   <div className="turn-label">{t("Ход команды")}</div>
                   <div className="turn-team">
                     <span className="turn-token" style={{
@@ -444,12 +540,12 @@ export function GameScreen({
                 </div>
 
                 <div className="dice-row">
-                  <div key={rollNonce} className={`die ${isMoving ? 'is-rolling' : ''}`} aria-label={`Кубик: ${die}`}>
+                  <div key={`${rollNonce}-${isMoving}`} className={`die ${isMoving ? 'is-rolling' : rollNonce > 0 ? 'is-settling' : ''}`} style={dieStyle(config.themeId, config.format)} aria-label={`Кубик: ${die}`}>
                     {Array.from({
                 length: 9
               }).map((_, index) => <span key={index} className={`pip ${pips.includes(index) ? 'is-on' : ''}`} />)}
                   </div>
-                  <button type="button" className="roll-btn" onClick={startRoll} disabled={phase !== 'idle'}>
+                  <button type="button" className="roll-btn" onClick={startRoll} disabled={phase !== 'idle' || turn >= config.maxMoves}>
                     {isMoving ? <>
                         <span className="roll-dots">
                           <i />
@@ -521,25 +617,25 @@ export function GameScreen({
             <div className="cell-legend">
               <span>
                 <i className="cell-swatch" style={{
-                background: 'linear-gradient(145deg,#fff3b8,#e8b52d)'
+                background: 'linear-gradient(145deg,#fffdf3,#f0dfa0)'
               }}>
                   <Sigma size={9} />
                 </i>{t("формула · 150")}</span>
               <span>
                 <i className="cell-swatch" style={{
-                background: 'linear-gradient(145deg,#ffcfae,#e56a3e)'
+                background: 'linear-gradient(145deg,#fff4ec,#f2cdb4)'
               }}>
                   <Lightbulb size={9} />
                 </i>{t("задача · 200")}</span>
               <span>
                 <i className="cell-swatch" style={{
-                background: 'linear-gradient(145deg,#e4d6ff,#8a5ce6)'
+                background: 'linear-gradient(145deg,#f4efff,#cdb9f0)'
               }}>
                   <FlaskConical size={9} />
                 </i>{t("лаборатория · 250")}</span>
               <span>
                 <i className="cell-swatch" style={{
-                background: 'linear-gradient(145deg,#ffe6a9,#ee9b26)'
+                background: `linear-gradient(145deg, color-mix(in srgb, ${theme.accent} 25%, #ffffff), color-mix(in srgb, ${theme.accent2} 45%, #ffffff))`
               }}>
                   <Rocket size={9} />
                 </i>{t("ракета · +250")}</span>
